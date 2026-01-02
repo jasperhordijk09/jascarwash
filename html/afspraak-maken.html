@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Afspraak maken - JAS CAR WASH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="logo.jpeg" alt="JAS CAR WASH">
+  JAS CAR WASH
+</header>
+
+<div class="container">
+  <h1>Afspraak maken</h1>
+
+  <form id="afspraakForm">
+    <label>Datum:</label>
+    <input type="date" name="datum" required>
+
+    <label>Tijdvak:</label>
+    <select name="tijdvak_id" id="tijdvakSelect" required></select>
+
+    <button type="submit">Afspraak bevestigen</button>
+  </form>
+</div>
+
+<div class="footer">© 2026 JAS CAR WASH</div>
+
+<script>
+async function loadTijdvakken() {
+  const response = await fetch("/api/tijdvakken.php", {
+    credentials: 'include'
+  });
+  const data = await response.json();
+
+  const select = document.getElementById("tijdvakSelect");
+  data.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t.id;
+    opt.textContent = `${t.starttijd} - ${t.eindtijd}`;
+    select.appendChild(opt);
+  });
+}
+
+document.getElementById('afspraakForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+
+  const response = await fetch("/api/afspraak-maken.php", {
+    method: 'POST',
+    body: formData,
+    credentials: 'include'
+  });
+
+  const result = await response.text();
+  if (result === "OK") {
+    alert("Afspraak gemaakt!");
+    window.location.href = "klant-dashboard.html";
+  } else {
+    alert(result);
+  }
+});
+
+loadTijdvakken();
+</script>
+</body>
+</html>

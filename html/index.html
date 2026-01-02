@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>JAS CAR WASH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="logo.jpeg" alt="JAS CAR WASH">
+    JAS CAR WASH
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Welkom bij JAS CAR WASH</h1>
+      <p>Kies een optie:</p>
+      <a class="button" href="registreren.html">Account aanmaken</a>
+      <a class="button" href="login.html">Inloggen</a>
+      <a class="button" href="beheerder-login.html">Beheerder login</a>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 JAS CAR WASH</div>
+
+  <script>
+    fetch("/api/log-visit.php?page=index", { credentials: "include" });
+  </script>
+</body>
+</html>

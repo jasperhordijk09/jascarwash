@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Beheerder Dashboard – JAS CAR WASH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="logo.jpeg" alt="JAS CAR WASH">
+  JAS CAR WASH – Beheerder Dashboard
+</header>
+
+<div class="container">
+  <div class="card sys-info">
+    <h2>Systeeminformatie</h2>
+    <div id="systeem"></div>
+  </div>
+
+  <div class="card">
+    <h2>Klanten</h2>
+    <div id="klanten"></div>
+  </div>
+
+  <div class="card">
+    <h2>Afspraken</h2>
+    <div id="afspraken"></div>
+  </div>
+
+  <div class="footer">© 2026 JAS CAR WASH – Beheerderspaneel</div>
+</div>
+
+<script>
+async function loadDashboard() {
+  const response = await fetch("/api/beheerder-dashboard.php", {
+    credentials: 'include'
+  });
+  const data = await response.json();
+
+  if (data.error) {
+    alert(data.error);
+    window.location.href = "beheerder-login.html";
+    return;
+  }
+
+  const sys = data.sysinfo;
+  document.getElementById("systeem").innerHTML = `
+    <p><strong>Uptime:</strong> ${sys.uptime}</p>
+    <p><strong>CPU Load:</strong> ${sys.cpu}</p>
+    <p><strong>Diskgebruik:</strong> ${sys.disk_used} MB van ${sys.disk_total} MB</p>
+    <p><strong>Bezoeken (index):</strong> ${sys.visits}</p>
+  `;
+
+  let klantenHTML = "";
+  data.klanten.forEach(k => {
+    klantenHTML += `
+      <div class="card">
+        <p><strong>${k.naam}</strong> – ${k.merk} ${k.model} (${k.nummerbord})</p>
+        <p>Email: ${k.email ?? "—"} | Tel: ${k.telefoon ?? "—"}</p>
+        <p>Laatste bezoek: ${k.laatste_bezoek ?? "—"}</p>
+        <p>Volgende afspraak: ${k.volgende_afspraak ?? "—"}</p>
+      </div>
+    `;
+  });
+  document.getElementById("klanten").innerHTML = klantenHTML;
+
+  let afsprakenHTML = "";
+  data.afspraken.forEach(a => {
+    afsprakenHTML += `
+      <div class="card">
+        <p><strong>${a.naam}</strong> – ${a.datum} – ${a.starttijd} tot ${a.eindtijd}</p>
+      </div>
+    `;
+  });
+  document.getElementById("afspraken").innerHTML = afsprakenHTML;
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

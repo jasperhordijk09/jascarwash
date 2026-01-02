@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Klant Dashboard - JAS CAR WASH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="logo.jpeg" alt="JAS CAR WASH">
+  JAS CAR WASH
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1>Klant Dashboard</h1>
+    <a class="button" href="afspraak-maken.html">Nieuwe afspraak maken</a>
+    <a class="button" href="/api/logout.php">Uitloggen</a>
+  </div>
+
+  <div class="card">
+    <h2>Mijn gegevens</h2>
+    <div id="klant"></div>
+  </div>
+
+  <div class="card">
+    <h2>Mijn afspraken</h2>
+    <div id="afspraken"></div>
+  </div>
+</div>
+
+<div class="footer">© 2026 JAS CAR WASH</div>
+
+<script>
+async function loadDashboard() {
+  const response = await fetch("/api/klant-dashboard.php", {
+    credentials: 'include'
+  });
+  const data = await response.json();
+
+  if (data.error) {
+    alert(data.error);
+    window.location.href = "login.html";
+    return;
+  }
+
+  document.getElementById("klant").innerHTML = `
+    <p><strong>Naam:</strong> ${data.klant.naam}</p>
+    <p><strong>Auto:</strong> ${data.klant.merk} ${data.klant.model}</p>
+    <p><strong>Nummerbord:</strong> ${data.klant.nummerbord}</p>
+    <p><strong>Email:</strong> ${data.klant.email ?? "—"}</p>
+    <p><strong>Telefoon:</strong> ${data.klant.telefoon ?? "—"}</p>
+    <p><strong>Laatste bezoek:</strong> ${data.klant.laatste_bezoek ?? "—"}</p>
+    <p><strong>Volgende afspraak:</strong> ${data.klant.volgende_afspraak ?? "—"}</p>
+  `;
+
+  let afsprakenHTML = "";
+  data.afspraken.forEach(a => {
+    afsprakenHTML += `<p>${a.datum} — ${a.starttijd} tot ${a.eindtijd}</p>`;
+  });
+  document.getElementById("afspraken").innerHTML = afsprakenHTML || "Geen afspraken.";
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
