@@ -1,5 +1,7 @@
-CREATE TABLE admins (
+CREATE TABLE tijdvak_beschikbaarheid (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  gebruikersnaam VARCHAR(255) NOT NULL,
-  wachtwoord VARCHAR(255) NOT NULL
+  tijdvak_id INT NOT NULL,
+  datum DATE NOT NULL,
+  beschikbaar BOOLEAN DEFAULT TRUE,
+  FOREIGN KEY (tijdvak_id) REFERENCES tijdvakken(id)
 );

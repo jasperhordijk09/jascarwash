@@ -1,0 +1,5 @@
+CREATE TABLE admins (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  gebruikersnaam VARCHAR(255) NOT NULL,
+  wachtwoord VARCHAR(255) NOT NULL
+);
