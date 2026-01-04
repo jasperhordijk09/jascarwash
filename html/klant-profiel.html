@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Klant Profiel - JAS Car Wash</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Klant Profiel</h1>
+  <nav>
+    <a href="/klant-dashboard.html">Dashboard</a>
+    <span id="darkToggle">🌙 / ☀️</span>
+    <a href="#" id="logoutLink">Uitloggen</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- PROFIEL -->
+  <section class="card">
+    <h2>Persoonlijke gegevens</h2>
+
+    <form id="profielForm">
+
+      <label>Naam:</label>
+      <input type="text" name="naam" id="naam" required>
+
+      <label>Merk auto:</label>
+      <input type="text" name="merk" id="merk" required>
+
+      <label>Model auto:</label>
+      <input type="text" name="model" id="model" required>
+
+      <label>Nummerbord:</label>
+      <input type="text" name="nummerbord" id="nummerbord" required>
+
+      <label>Telefoon:</label>
+      <input type="text" name="telefoon" id="telefoon">
+
+      <button type="submit">Gegevens opslaan</button>
+    </form>
+
+    <div id="profielMessage"></div>
+  </section>
+
+  <!-- WACHTWOORD -->
+  <section class="card">
+    <h2>Wachtwoord wijzigen</h2>
+
+    <form id="wachtwoordForm">
+
+      <label>Huidig wachtwoord:</label>
+      <input type="password" name="oud" required>
+
+      <label>Nieuw wachtwoord:</label>
+      <input type="password" name="nieuw" required>
+
+      <label>Herhaal nieuw wachtwoord:</label>
+      <input type="password" name="nieuw2" required>
+
+      <button type="submit">Wachtwoord wijzigen</button>
+    </form>
+
+    <div id="wachtwoordMessage"></div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 JAS Car Wash</p>
+</footer>
+
+<script>
+/* ============================
+   DARK MODE
+============================ */
+const darkToggle = document.getElementById("darkToggle");
+
+function applyDarkMode() {
+  if (localStorage.getItem("darkmode") === "true") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+
+darkToggle.addEventListener("click", () => {
+  const enabled = localStorage.getItem("darkmode") === "true";
+  localStorage.setItem("darkmode", !enabled);
+  applyDarkMode();
+});
+
+applyDarkMode();
+
+/* ============================
+   PROFIEL LADEN
+============================ */
+async function loadProfiel() {
+  const res = await fetch("/api/klant-profiel-get.php", { credentials: "include" });
+  const data = await res.json();
+
+  if (data.status !== "OK") {
+    window.location.href = "/klant-login.html";
+    return;
+  }
+
+  const k = data.klant;
+
+  document.getElementById("naam").value = k.naam;
+  document.getElementById("merk").value = k.merk;
+  document.getElementById("model").value = k.model;
+  document.getElementById("nummerbord").value = k.nummerbord;
+  document.getElementById("telefoon").value = k.telefoon ?? "";
+}
+
+/* ============================
+   PROFIEL OPSLAAN
+============================ */
+document.getElementById("profielForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/api/klant-profiel-update.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  const msg = document.getElementById("profielMessage");
+
+  msg.textContent = data.status === "OK"
+    ? "Gegevens opgeslagen!"
+    : "Fout: " + data.message;
+});
+
+/* ============================
+   WACHTWOORD WIJZIGEN
+============================ */
+document.getElementById("wachtwoordForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/api/klant-wachtwoord-update.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  const msg = document.getElementById("wachtwoordMessage");
+
+  msg.textContent = data.status === "OK"
+    ? "Wachtwoord gewijzigd!"
+    : "Fout: " + data.message;
+});
+
+/* ============================
+   LOGOUT
+============================ */
+document.getElementById("logoutLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  await fetch("/api/logout.php", { credentials: "include" });
+  window.location.href = "/index.html";
+});
+
+/* ============================
+   START
+============================ */
+loadProfiel();
+</script>
+
+</body>
+</html>

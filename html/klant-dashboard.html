@@ -26,7 +26,287 @@
 
     <!-- NIEUWE AFSPRAAK -->
     <section class="card">
-      <h2>Nieuwe afspraak inplannen</h2>
+      <h2<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Klant Dashboard - JAS Car Wash</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Klant Dashboard</h1>
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/info.html">Informatie</a>
+    <a href="/klant-profiel.html">Profiel</a>
+    <span id="darkToggle">🌙 / ☀️</span>
+    <a href="#" id="logoutLink">Uitloggen</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- KLANT INFO -->
+  <section class="card">
+    <h2>Jouw gegevens</h2>
+    <div id="klantInfo">Laden...</div>
+  </section>
+
+  <!-- NIEUWE AFSPRAAK -->
+  <section class="card">
+    <h2>Nieuwe afspraak inplannen</h2>
+
+    <form id="afspraakForm">
+
+      <label>Datum:</label>
+      <input type="date" name="datum" id="datum" required>
+
+      <label>Pakket:</label>
+      <select name="prijs_id" id="pakketSelect" required></select>
+
+      <label>Tijdvakken:</label>
+      <div id="tijdvakken">Kies eerst een datum.</div>
+
+      <button type="submit">Afspraak inplannen</button>
+    </form>
+
+    <div id="afspraakMessage"></div>
+  </section>
+
+  <!-- AFSPRAKEN -->
+  <section class="card">
+    <h2>Jouw afspraken</h2>
+    <div id="afspraken">Laden...</div>
+  </section>
+
+  <!-- PRIJZEN -->
+  <section class="card">
+    <h2>Prijzen</h2>
+    <div id="prijzen">Laden...</div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 JAS Car Wash</p>
+</footer>
+
+<script>
+/* ============================
+   DARK MODE
+============================ */
+const darkToggle = document.getElementById("darkToggle");
+
+function applyDarkMode() {
+  if (localStorage.getItem("darkmode") === "true") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+
+darkToggle.addEventListener("click", () => {
+  const enabled = localStorage.getItem("darkmode") === "true";
+  localStorage.setItem("darkmode", !enabled);
+  applyDarkMode();
+});
+
+applyDarkMode();
+
+/* ============================
+   DASHBOARD LADEN
+============================ */
+async function loadDashboard() {
+  const res = await fetch("/api/klant-dashboard.php", { credentials: "include" });
+  const data = await res.json();
+
+  if (data.status !== "OK") {
+    window.location.href = "/klant-login.html";
+    return;
+  }
+
+  loadKlantInfo(data.klant);
+  loadAfspraken(data.afspraken);
+  loadPrijzen(data.prijzen);
+  loadPakketSelect(data.prijzen);
+}
+
+/* ============================
+   KLANT INFO
+============================ */
+function loadKlantInfo(k) {
+  document.getElementById("klantInfo").innerHTML = `
+    <p><strong>Naam:</strong> ${k.naam}</p>
+    <p><strong>Auto:</strong> ${k.merk} ${k.model} (${k.nummerbord})</p>
+    <p><strong>Laatste bezoek:</strong> ${k.laatste_bezoek ?? '-'}</p>
+    <p><strong>Volgende afspraak:</strong> ${k.volgende_afspraak ?? '-'}</p>
+  `;
+}
+
+/* ============================
+   AFSPRAKEN TONEN
+============================ */
+function loadAfspraken(afspraken) {
+  const div = document.getElementById("afspraken");
+  div.innerHTML = "";
+
+  if (afspraken.length === 0) {
+    div.innerHTML = "<p>Je hebt nog geen afspraken.</p>";
+    return;
+  }
+
+  afspraken.forEach(a => {
+    div.innerHTML += `
+      <div class="afspraak-item">
+        <p><strong>Datum:</strong> ${a.datum} (${a.dagnaam})</p>
+        <p><strong>Tijd:</strong> ${a.starttijd} - ${a.eindtijd}</p>
+        <p><strong>Pakket:</strong> ${a.pakket_naam} (€ ${a.totale_prijs})</p>
+        <p><strong>Status:</strong> ${a.status}</p>
+
+        ${a.status === "gepland" ? `
+          <button onclick="annuleerAfspraak(${a.id})">Afspraak afzeggen</button>
+        ` : ""}
+      </div>
+    `;
+  });
+}
+
+/* ============================
+   PRIJZEN TONEN
+============================ */
+function loadPrijzen(prijzen) {
+  const div = document.getElementById("prijzen");
+  div.innerHTML = "";
+
+  prijzen.forEach(p => {
+    div.innerHTML += `
+      <div class="prijs-item">
+        <strong>${p.naam}</strong><br>
+        ${p.beschrijving ?? ""}<br>
+        <strong>€ ${p.prijs}</strong>
+      </div>
+    `;
+  });
+}
+
+/* ============================
+   PAKKETTEN SELECT
+============================ */
+function loadPakketSelect(prijzen) {
+  const select = document.getElementById("pakketSelect");
+  select.innerHTML = "";
+
+  prijzen.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = `${p.naam} (€ ${p.prijs})`;
+    select.appendChild(opt);
+  });
+}
+
+/* ============================
+   TIJDVAKKEN LADEN
+============================ */
+document.getElementById("datum").addEventListener("change", async () => {
+  const datum = document.getElementById("datum").value;
+  const div = document.getElementById("tijdvakken");
+
+  if (!datum) return;
+
+  const res = await fetch("/api/tijdvakken-beschikbaar.php?datum=" + encodeURIComponent(datum), {
+    credentials: "include"
+  });
+  const data = await res.json();
+
+  div.innerHTML = "";
+
+  if (data.status !== "OK" || data.tijdvakken.length === 0) {
+    div.innerHTML = "Geen tijdvakken beschikbaar.";
+    return;
+  }
+
+  data.tijdvakken.forEach(t => {
+    div.innerHTML += `
+      <label>
+        <input type="checkbox" name="tijdvakken[]" value="${t.id}">
+        ${t.starttijd} - ${t.eindtijd}
+      </label><br>
+    `;
+  });
+});
+
+/* ============================
+   AFSPRAAK MAKEN
+============================ */
+document.getElementById("afspraakForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/api/afspraak-maken.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  const msg = document.getElementById("afspraakMessage");
+
+  if (data.status === "OK") {
+    msg.textContent = "Afspraak succesvol ingepland!";
+    e.target.reset();
+    document.getElementById("tijdvakken").innerHTML = "";
+    loadDashboard();
+  } else {
+    msg.textContent = "Fout: " + data.message;
+  }
+});
+
+/* ============================
+   AFSPRAAK ANNULEREN
+============================ */
+async function annuleerAfspraak(id) {
+  if (!confirm("Weet je zeker dat je deze afspraak wilt afzeggen?")) return;
+
+  const formData = new FormData();
+  formData.append("afspraak_id", id);
+
+  const res = await fetch("/api/afspraak-annuleren.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  });
+
+  const data = await res.json();
+
+  if (data.status === "OK") {
+    alert("Afspraak geannuleerd.");
+    loadDashboard();
+  } else {
+    alert("Fout: " + data.message);
+  }
+}
+
+/* ============================
+   LOGOUT
+============================ */
+document.getElementById("logoutLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  await fetch("/api/logout.php", { credentials: "include" });
+  window.location.href = "/index.html";
+});
+
+/* ============================
+   START
+============================ */
+loadDashboard();
+</script>
+
+</body>
+</html>
+>Nieuwe afspraak inplannen</h2>
 
       <form id="afspraakForm">
 
