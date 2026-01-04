@@ -8,6 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: testdb
+    ports:
+      - "11472:3306"
     volumes:
       - $docker_data_dir/jaspercarwash/:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
