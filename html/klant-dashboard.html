@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
     <h1>Klant Dashboard</h1>
     <nav>
@@ -16,14 +17,19 @@
   </header>
 
   <main>
+
+    <!-- KLANT INFO -->
     <section class="card">
       <h2>Jouw gegevens</h2>
-      <div id="klantInfo"></div>
+      <div id="klantInfo">Laden...</div>
     </section>
 
+    <!-- NIEUWE AFSPRAAK -->
     <section class="card">
       <h2>Nieuwe afspraak inplannen</h2>
+
       <form id="afspraakForm">
+
         <label>Datum:</label>
         <input type="date" name="datum" id="datum" required>
 
@@ -31,137 +37,221 @@
         <select name="prijs_id" id="pakketSelect" required></select>
 
         <label>Tijdvakken:</label>
-        <div id="tijdvakken"></div>
+        <div id="tijdvakken">Kies eerst een datum.</div>
 
         <button type="submit">Afspraak inplannen</button>
       </form>
+
       <div id="afspraakMessage"></div>
     </section>
 
+    <!-- AFSPRAKEN -->
     <section class="card">
       <h2>Jouw afspraken</h2>
-      <div id="afspraken"></div>
+      <div id="afspraken">Laden...</div>
     </section>
 
+    <!-- PRIJZEN -->
     <section class="card">
       <h2>Prijzen</h2>
-      <div id="prijzen"></div>
+      <div id="prijzen">Laden...</div>
     </section>
+
   </main>
 
   <footer>
     <p>© 2026 JAS Car Wash</p>
   </footer>
 
-  <script>
-  async function loadDashboard() {
-    const res = await fetch("/api/klant-dashboard.php", { credentials: "include" });
-    const data = await res.json();
-    if (data.status !== "OK") {
-      window.location.href = "/klant-login.html";
-      return;
-    }
+<script>
+/* ============================
+   DASHBOARD LADEN
+============================ */
+async function loadDashboard() {
+  const res = await fetch("/api/klant-dashboard.php", { credentials: "include" });
+  const data = await res.json();
 
-    const k = data.klant;
-    document.getElementById("klantInfo").innerHTML = `
-      <p><strong>Naam:</strong> ${k.naam}</p>
-      <p><strong>Auto:</strong> ${k.merk} ${k.model} (${k.nummerbord})</p>
-      <p><strong>Laatste bezoek:</strong> ${k.laatste_bezoek ?? '-'}</p>
-      <p><strong>Volgende afspraak:</strong> ${k.volgende_afspraak ?? '-'}</p>
+  if (data.status !== "OK") {
+    window.location.href = "/klant-login.html";
+    return;
+  }
+
+  loadKlantInfo(data.klant);
+  loadAfspraken(data.afspraken);
+  loadPrijzen(data.prijzen);
+  loadPakketSelect(data.prijzen);
+}
+
+/* ============================
+   KLANT INFO
+============================ */
+function loadKlantInfo(k) {
+  document.getElementById("klantInfo").innerHTML = `
+    <p><strong>Naam:</strong> ${k.naam}</p>
+    <p><strong>Auto:</strong> ${k.merk} ${k.model} (${k.nummerbord})</p>
+    <p><strong>Laatste bezoek:</strong> ${k.laatste_bezoek ?? '-'}</p>
+    <p><strong>Volgende afspraak:</strong> ${k.volgende_afspraak ?? '-'}</p>
+  `;
+}
+
+/* ============================
+   AFSPRAKEN TONEN
+============================ */
+function loadAfspraken(afspraken) {
+  const div = document.getElementById("afspraken");
+  div.innerHTML = "";
+
+  if (afspraken.length === 0) {
+    div.innerHTML = "<p>Je hebt nog geen afspraken.</p>";
+    return;
+  }
+
+  afspraken.forEach(a => {
+    div.innerHTML += `
+      <div class="afspraak-item">
+        <p><strong>Datum:</strong> ${a.datum} (${a.dagnaam})</p>
+        <p><strong>Tijd:</strong> ${a.starttijd} - ${a.eindtijd}</p>
+        <p><strong>Pakket:</strong> ${a.pakket_naam} (€ ${a.totale_prijs})</p>
+        <p><strong>Status:</strong> ${a.status}</p>
+
+        ${a.status === "gepland" ? `
+          <button onclick="annuleerAfspraak(${a.id})">Afspraak afzeggen</button>
+        ` : ""}
+      </div>
     `;
+  });
+}
 
-    // Afspraken tonen
-    const afsprakenDiv = document.getElementById("afspraken");
-    afsprakenDiv.innerHTML = "";
-    data.afspraken.forEach(a => {
-      afsprakenDiv.innerHTML += `
-        <div class="afspraak-item">
-          <p><strong>Datum:</strong> ${a.datum} (${a.dagnaam})</p>
-          <p><strong>Tijd:</strong> ${a.starttijd} - ${a.eindtijd}</p>
-          <p><strong>Pakket:</strong> ${a.pakket_naam} (€ ${a.totale_prijs})</p>
-          <p><strong>Status:</strong> ${a.status}</p>
-        </div>
-      `;
-    });
+/* ============================
+   PRIJZEN TONEN
+============================ */
+function loadPrijzen(prijzen) {
+  const div = document.getElementById("prijzen");
+  div.innerHTML = "";
 
-    // Prijzen tonen
-    const prijzenDiv = document.getElementById("prijzen");
-    prijzenDiv.innerHTML = "";
-    data.prijzen.forEach(p => {
-      prijzenDiv.innerHTML += `
-        <div class="prijs-item">
-          <strong>${p.naam}</strong><br>
-          ${p.beschrijving ?? ""}<br>
-          <strong>€ ${p.prijs}</strong>
-        </div>
-      `;
-    });
+  prijzen.forEach(p => {
+    div.innerHTML += `
+      <div class="prijs-item">
+        <strong>${p.naam}</strong><br>
+        ${p.beschrijving ?? ""}<br>
+        <strong>€ ${p.prijs}</strong>
+      </div>
+    `;
+  });
+}
 
-    // Ook meteen pakketten in de select zetten
-    const pakketSelect = document.getElementById("pakketSelect");
-    pakketSelect.innerHTML = "";
-    data.prijzen.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p.id;
-      opt.textContent = `${p.naam} (€ ${p.prijs})`;
-      pakketSelect.appendChild(opt);
-    });
+/* ============================
+   PAKKETTEN SELECT
+============================ */
+function loadPakketSelect(prijzen) {
+  const select = document.getElementById("pakketSelect");
+  select.innerHTML = "";
+
+  prijzen.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = `${p.naam} (€ ${p.prijs})`;
+    select.appendChild(opt);
+  });
+}
+
+/* ============================
+   TIJDVAKKEN LADEN
+============================ */
+document.getElementById("datum").addEventListener("change", async () => {
+  const datum = document.getElementById("datum").value;
+  const div = document.getElementById("tijdvakken");
+
+  if (!datum) return;
+
+  const res = await fetch("/api/tijdvakken-beschikbaar.php?datum=" + encodeURIComponent(datum), {
+    credentials: "include"
+  });
+  const data = await res.json();
+
+  div.innerHTML = "";
+
+  if (data.status !== "OK" || data.tijdvakken.length === 0) {
+    div.innerHTML = "Geen tijdvakken beschikbaar.";
+    return;
   }
 
-  async function loadTijdvakken() {
-    const datum = document.getElementById("datum").value;
-    if (!datum) return;
-    const res = await fetch("/api/tijdvakken-beschikbaar.php?datum=" + encodeURIComponent(datum), {
-      credentials: "include"
-    });
-    const data = await res.json();
-    const div = document.getElementById("tijdvakken");
-    div.innerHTML = "";
+  data.tijdvakken.forEach(t => {
+    div.innerHTML += `
+      <label>
+        <input type="checkbox" name="tijdvakken[]" value="${t.id}">
+        ${t.starttijd} - ${t.eindtijd}
+      </label><br>
+    `;
+  });
+});
 
-    if (data.status !== "OK") {
-      div.innerHTML = "Geen tijdvakken beschikbaar.";
-      return;
-    }
+/* ============================
+   AFSPRAAK MAKEN
+============================ */
+document.getElementById("afspraakForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    data.tijdvakken.forEach(t => {
-      div.innerHTML += `
-        <label>
-          <input type="checkbox" name="tijdvakken[]" value="${t.id}">
-          ${t.starttijd} - ${t.eindtijd}
-        </label><br>
-      `;
-    });
+  const formData = new FormData(e.target);
+
+  const res = await fetch("/api/afspraak-maken.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  });
+
+  const data = await res.json();
+  const msg = document.getElementById("afspraakMessage");
+
+  if (data.status === "OK") {
+    msg.textContent = "Afspraak succesvol ingepland!";
+    e.target.reset();
+    document.getElementById("tijdvakken").innerHTML = "";
+    loadDashboard();
+  } else {
+    msg.textContent = "Fout: " + data.message;
   }
+});
 
-  document.getElementById("datum").addEventListener("change", loadTijdvakken);
+/* ============================
+   AFSPRAAK ANNULEREN
+============================ */
+async function annuleerAfspraak(id) {
+  if (!confirm("Weet je zeker dat je deze afspraak wilt afzeggen?")) return;
 
-  document.getElementById("afspraakForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const res = await fetch("/api/afspraak-maken.php", {
-      method: "POST",
-      body: formData,
-      credentials: "include"
-    });
-    const data = await res.json();
-    const msg = document.getElementById("afspraakMessage");
-    if (data.status === "OK") {
-      msg.textContent = "Afspraak succesvol ingepland!";
-      e.target.reset();
-      document.getElementById("tijdvakken").innerHTML = "";
-      loadDashboard(); // afspraken opnieuw laden
-    } else {
-      msg.textContent = "Fout: " + data.message;
-    }
+  const formData = new FormData();
+  formData.append("afspraak_id", id);
+
+  const res = await fetch("/api/afspraak-annuleren.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
   });
 
-  document.getElementById("logoutLink").addEventListener("click", async (e) => {
-    e.preventDefault();
-    await fetch("/api/logout.php", { credentials: "include" });
-    window.location.href = "/index.html";
-  });
+  const data = await res.json();
 
-  loadDashboard();
-  </script>
+  if (data.status === "OK") {
+    alert("Afspraak geannuleerd.");
+    loadDashboard();
+  } else {
+    alert("Fout: " + data.message);
+  }
+}
+
+/* ============================
+   LOGOUT
+============================ */
+document.getElementById("logoutLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  await fetch("/api/logout.php", { credentials: "include" });
+  window.location.href = "/index.html";
+});
+
+/* ============================
+   START
+============================ */
+loadDashboard();
+</script>
+
 </body>
 </html>
