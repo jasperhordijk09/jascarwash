@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Klant login - JAS Car Wash</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Klant login</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/info.html">Informatie</a>
+      <a href="/klant-register.html">Account maken</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Inloggen</h2>
+      <form id="loginForm">
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <label>Wachtwoord:</label>
+        <input type="password" name="wachtwoord" required>
+
+        <button type="submit">Inloggen</button>
+      </form>
+      <div id="loginMessage"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 JAS Car Wash</p>
+  </footer>
+
+  <script>
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const res = await fetch("/api/login-klant.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+    const data = await res.json();
+    const msg = document.getElementById("loginMessage");
+    if (data.status === "OK") {
+      window.location.href = "/klant-dashboard.html";
+    } else {
+      msg.textContent = "Fout: " + data.message;
+    }
+  });
+  </script>
+</body>
+</html>

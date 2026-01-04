@@ -2,28 +2,39 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>JAS CAR WASH</title>
+  <title>JAS Car Wash</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <img src="logo.jpeg" alt="JAS CAR WASH">
-    JAS CAR WASH
+    <h1>JAS Car Wash</h1>
+    <nav>
+      <a href="/info.html">Informatie</a>
+      <a href="/klant-login.html">Inloggen</a>
+      <a href="/klant-register.html">Account maken</a>
+    </nav>
   </header>
 
-  <div class="container">
-    <div class="card">
-      <h1>Welkom bij JAS CAR WASH</h1>
-      <a class="button" href="registreren.html">Account aanmaken</a>
-      <a class="button" href="login.html">Inloggen</a>
-      <a class="button" href="beheerder-login.html">Beheerder login</a>
-    </div>
-  </div>
+  <main>
+    <section class="card">
+      <h2>Welkom bij JAS Car Wash</h2>
+      <p>
+        Via deze website kun je als klant een account maken, inloggen en vanaf je
+        eigen dashboard afspraken inplannen voor het wassen of detailen van je auto.
+      </p>
+      <p>
+        Wil je meer weten over openingstijden, locatie of services?
+        Ga dan naar de <a href="/info.html">informatiepagina</a>.
+      </p>
+      <p>
+        Heb je al een account? <a href="/klant-login.html">Log hier in</a>.<br>
+        Nog geen account? <a href="/klant-register.html">Maak er één aan</a>.
+      </p>
+    </section>
+  </main>
 
-  <div class="footer">© 2026 JAS CAR WASH</div>
-
-  <script>
-    fetch("/api/log-visit.php?page=index", { credentials: "include" });
-  </script>
+  <footer>
+    <p>© 2026 JAS Car Wash</p>
+  </footer>
 </body>
 </html>

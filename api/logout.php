@@ -1,6 +1,6 @@
 <?php
-session_start();
+require 'session-check.php';
 session_unset();
 session_destroy();
-header('Location: /index.html');
-exit;
+header('Content-Type: application/json');
+echo json_encode(["status" => "OK"]);

@@ -2,197 +2,256 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Beheerder Dashboard – JAS CAR WASH</title>
+  <title>Beheerder Dashboard - JAS Car Wash</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <h1>JAS CAR WASH – Beheerder Dashboard</h1>
+    <nav>
+      <a href="#" id="logoutLink">Uitloggen</a>
+      <a href="https://inventree.hordijk.nu" target="_blank">InvenTree</a>
+    </nav>
+  </header>
 
-<header>
-  <img src="logo.jpeg" alt="JAS CAR WASH">
-  JAS CAR WASH – Beheerder Dashboard
-</header>
+  <main>
+    <section class="card">
+      <h2>Systeeminformatie</h2>
+      <div id="sysinfo"></div>
+    </section>
 
-<div class="container">
+    <section class="card">
+      <h2>Prijzen beheren</h2>
+      <div id="prijzenBeheer"></div>
+      <h3>Nieuwe / bestaande prijs</h3>
+      <form id="prijsForm">
+        <input type="hidden" name="id" id="prijsId">
+        <label>Naam:</label>
+        <input type="text" name="naam" id="prijsNaam" required>
 
-  <!-- SYSTEEMINFO -->
-  <div class="card">
-    <h2>Systeeminformatie</h2>
-    <div id="systeem"></div>
-  </div>
+        <label>Beschrijving:</label>
+        <textarea name="beschrijving" id="prijsBeschrijving"></textarea>
 
-  <!-- KLANTEN -->
-  <div class="card">
-    <h2>Klanten</h2>
-    <div id="klanten"></div>
-  </div>
+        <label>Prijs (€):</label>
+        <input type="number" step="0.01" name="prijs" id="prijsBedrag" required>
 
-  <!-- AFSPRAKEN -->
-  <div class="card">
-    <h2>Afspraken</h2>
-    <div id="afspraken"></div>
-  </div>
+        <button type="submit">Opslaan</button>
+        <button type="button" id="prijsReset">Nieuw</button>
+      </form>
+    </section>
 
-  <!-- TIJDVAK BESCHIKBAARHEID -->
-  <div class="card">
-    <h2>Tijdvak beschikbaarheid beheren</h2>
+    <section class="card">
+      <h2>Afspraken</h2>
+      <div id="afspraken"></div>
+    </section>
 
-    <h3>Bestaande beschikbaarheid</h3>
-    <div id="tijdvakBeschikbaarheid"></div>
+    <section class="card">
+      <h2>Aankopen</h2>
+      <div id="aankopen"></div>
 
-    <h3>Datum toevoegen aan tijdvak</h3>
-    <form id="addDateForm">
-      <label>Tijdvak:</label>
-      <select name="tijdvak_id" id="tijdvakSelect" required></select>
+      <h3>Nieuwe aankoop</h3>
+      <form id="aankoopForm">
+        <label>Datum:</label>
+        <input type="date" name="datum" required>
 
-      <label>Datum:</label>
-      <input type="date" name="datum" required>
+        <label>Categorie:</label>
+        <input type="text" name="categorie" required>
 
-      <button type="submit">Toevoegen</button>
-    </form>
-  </div>
+        <label>Omschrijving:</label>
+        <input type="text" name="omschrijving">
 
-</div>
+        <label>Bedrag (€):</label>
+        <input type="number" step="0.01" name="bedrag" required>
 
-<div class="footer">© 2026 JAS CAR WASH – Beheerderspaneel</div>
+        <label>Opmerking:</label>
+        <textarea name="opmerking"></textarea>
 
-<script>
-/* -------------------------
-   DASHBOARD DATA LADEN
--------------------------- */
+        <button type="submit">Opslaan</button>
+      </form>
+    </section>
 
-async function loadDashboard() {
-  const response = await fetch("/api/beheerder-dashboard.php", {
-    credentials: 'include'
-  });
-  const data = await response.json();
+    <section class="card">
+      <h2>Statistieken per periode</h2>
+      <form id="statForm">
+        <label>Van:</label>
+        <input type="date" name="van" required>
+        <label>Tot:</label>
+        <input type="date" name="tot" required>
+        <button type="submit">Berekenen</button>
+      </form>
+      <div id="statistieken"></div>
+    </section>
+  </main>
 
-  if (data.error) {
-    alert(data.error);
-    window.location.href = "beheerder-login.html";
-    return;
+  <footer>
+    <p>© 2026 JAS CAR WASH – Beheerderpaneel</p>
+  </footer>
+
+  <script>
+  async function loadDashboard() {
+    const res = await fetch("/api/beheerder-dashboard.php", { credentials: "include" });
+    const data = await res.json();
+    if (data.status !== "OK") {
+      window.location.href = "/beheerder-login.html";
+      return;
+    }
+
+    // Sysinfo
+    const s = data.sysinfo;
+    document.getElementById("sysinfo").innerHTML = `
+      <p><strong>Uptime:</strong> ${s.uptime}</p>
+      <p><strong>CPU load:</strong> ${s.cpu}</p>
+      <p><strong>Disk:</strong> ${s.disk_used} / ${s.disk_total} MB</p>
+      <p><strong>Bezoeken index:</strong> ${s.visits}</p>
+    `;
+
+    // Prijzen
+    const pb = document.getElementById("prijzenBeheer");
+    pb.innerHTML = "";
+    data.prijzen.forEach(p => {
+      pb.innerHTML += `
+        <div class="prijs-row">
+          <strong>${p.naam}</strong> (€ ${p.prijs})<br>
+          ${p.beschrijving ?? ""}<br>
+          <button onclick="editPrijs(${p.id})">Bewerken</button>
+          <button onclick="deletePrijs(${p.id})">Verwijderen</button>
+        </div>
+      `;
+    });
+
+    // Afspraken
+    const afDiv = document.getElementById("afspraken");
+    afDiv.innerHTML = "";
+    data.afspraken.forEach(a => {
+      afDiv.innerHTML += `
+        <div class="afspraak-row">
+          <p><strong>Klant:</strong> ${a.klant_naam} (${a.nummerbord})</p>
+          <p><strong>Datum:</strong> ${a.datum} (${a.dagnaam})</p>
+          <p><strong>Tijd:</strong> ${a.starttijd} - ${a.eindtijd}</p>
+          <p><strong>Pakket:</strong> ${a.pakket_naam} (€ ${a.totale_prijs})</p>
+          <p><strong>Status:</strong> ${a.status}</p>
+          <p><strong>Duur (min):</strong> ${a.duur_minuten ?? '-'}</p>
+          <label>Duur invullen:</label>
+          <input type="number" id="duur_${a.id}" value="${a.duur_minuten ?? ''}" min="0">
+          <button onclick="markeerGeweest(${a.id})">Markeer als geweest</button>
+        </div>
+      `;
+    });
+
+    // Aankopen
+    const akDiv = document.getElementById("aankopen");
+    akDiv.innerHTML = "";
+    data.aankopen.forEach(k => {
+      akDiv.innerHTML += `
+        <div class="aankoop-row">
+          <p><strong>Datum:</strong> ${k.datum}</p>
+          <p><strong>Categorie:</strong> ${k.categorie}</p>
+          <p><strong>Omschrijving:</strong> ${k.omschrijving ?? ''}</p>
+          <p><strong>Bedrag:</strong> € ${k.bedrag}</p>
+        </div>
+      `;
+    });
   }
 
-  // Systeeminfo
-  const sys = data.sysinfo;
-  document.getElementById("systeem").innerHTML = `
-    <p><strong>Uptime:</strong> ${sys.uptime}</p>
-    <p><strong>CPU Load:</strong> ${sys.cpu}</p>
-    <p><strong>Diskgebruik:</strong> ${sys.disk_used} MB van ${sys.disk_total} MB</p>
-    <p><strong>Bezoeken (index):</strong> ${sys.visits}</p>
-  `;
+  async function editPrijs(id) {
+    const res = await fetch("/api/prijzen.php?id=" + id, { credentials: "include" });
+    const data = await res.json();
+    if (data.status !== "OK") return;
+    const p = data.prijs;
+    document.getElementById("prijsId").value = p.id;
+    document.getElementById("prijsNaam").value = p.naam;
+    document.getElementById("prijsBeschrijving").value = p.beschrijving ?? "";
+    document.getElementById("prijsBedrag").value = p.prijs;
+  }
 
-  // Klanten
-  let klantenHTML = "";
-  data.klanten.forEach(k => {
-    klantenHTML += `
-      <div class="card">
-        <p><strong>${k.naam}</strong> – ${k.merk} ${k.model} (${k.nummerbord})</p>
-        <p>Email: ${k.email ?? "—"} | Tel: ${k.telefoon ?? "—"}</p>
-        <p>Laatste bezoek: ${k.laatste_bezoek ?? "—"}</p>
-        <p>Volgende afspraak: ${k.volgende_afspraak ?? "—"}</p>
-      </div>
-    `;
-  });
-  document.getElementById("klanten").innerHTML = klantenHTML;
+  async function deletePrijs(id) {
+    if (!confirm("Weet je zeker dat je deze prijs wilt verwijderen?")) return;
+    await fetch("/api/prijs-delete.php", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "id=" + encodeURIComponent(id)
+    });
+    loadDashboard();
+  }
 
-  // Afspraken
-  let afsprakenHTML = "";
-  data.afspraken.forEach(a => {
-    afsprakenHTML += `
-      <div class="card">
-        <p><strong>${a.naam}</strong> – ${a.datum} – ${a.starttijd} tot ${a.eindtijd}</p>
-      </div>
-    `;
-  });
-  document.getElementById("afspraken").innerHTML = afsprakenHTML;
-}
-
-/* -------------------------
-   TIJDVAK BESCHIKBAARHEID
--------------------------- */
-
-async function loadTijdvakBeschikbaarheid() {
-  const response = await fetch("/api/tijdvak-beschikbaarheid.php", {
-    credentials: "include"
-  });
-  const data = await response.json();
-
-  let html = "";
-  data.forEach(row => {
-    html += `
-      <div class="card">
-        <p><strong>${row.starttijd} - ${row.eindtijd}</strong></p>
-        <p>Datum: ${row.datum}</p>
-        <p>Status: ${row.beschikbaar == 1 ? "Beschikbaar" : "Geblokkeerd"}</p>
-        <button onclick="toggleBeschikbaarheid(${row.id})">
-          ${row.beschikbaar == 1 ? "Blokkeer" : "Activeer"}
-        </button>
-      </div>
-    `;
-  });
-
-  document.getElementById("tijdvakBeschikbaarheid").innerHTML = html;
-}
-
-async function toggleBeschikbaarheid(id) {
-  await fetch("/api/tijdvak-beschikbaarheid.php", {
-    method: "POST",
-    body: new URLSearchParams({ id }),
-    credentials: "include"
-  });
-  loadTijdvakBeschikbaarheid();
-}
-
-/* -------------------------
-   TIJDVAK SELECTIE LADEN
--------------------------- */
-
-async function loadTijdvakkenForSelect() {
-  const response = await fetch("/api/tijdvakken.php", {
-    credentials: "include"
-  });
-  const data = await response.json();
-
-  const select = document.getElementById("tijdvakSelect");
-  data.forEach(t => {
-    const opt = document.createElement("option");
-    opt.value = t.id;
-    opt.textContent = `${t.starttijd} - ${t.eindtijd}`;
-    select.appendChild(opt);
-  });
-}
-
-/* -------------------------
-   DATUM TOEVOEGEN
--------------------------- */
-
-document.getElementById("addDateForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-
-  const response = await fetch("/api/tijdvak-toevoegen-datum.php", {
-    method: "POST",
-    body: formData,
-    credentials: "include"
-  });
-
-  const result = await response.text();
-  if (result === "OK") {
-    loadTijdvakBeschikbaarheid();
+  document.getElementById("prijsForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    await fetch("/api/prijs-save.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
     e.target.reset();
-  } else {
-    alert(result);
+    document.getElementById("prijsId").value = "";
+    loadDashboard();
+  });
+
+  document.getElementById("prijsReset").addEventListener("click", () => {
+    document.getElementById("prijsId").value = "";
+    document.getElementById("prijsNaam").value = "";
+    document.getElementById("prijsBeschrijving").value = "";
+    document.getElementById("prijsBedrag").value = "";
+  });
+
+  document.getElementById("aankoopForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    await fetch("/api/aankoop-save.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+    e.target.reset();
+    loadDashboard();
+  });
+
+  document.getElementById("statForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const params = new URLSearchParams(formData);
+    const res = await fetch("/api/statistieken-periode.php?" + params.toString(), {
+      credentials: "include"
+    });
+    const data = await res.json();
+    const div = document.getElementById("statistieken");
+    if (data.status !== "OK") {
+      div.textContent = "Fout: " + data.message;
+      return;
+    }
+    const s = data.statistieken;
+    div.innerHTML = `
+      <p><strong>Omzet:</strong> € ${s.omzet}</p>
+      <p><strong>Kosten:</strong> € ${s.kosten}</p>
+      <p><strong>Winst:</strong> € ${s.winst}</p>
+      <p><strong>Totaal gewerkte uren:</strong> ${s.gewerkte_uren}</p>
+      <p><strong>Gemiddeld inkomen per uur:</strong> € ${s.inkomen_per_uur}</p>
+      <p><strong>Gemiddelde duur per afspraak (min):</strong> ${s.gemiddelde_duur}</p>
+    `;
+  });
+
+  async function markeerGeweest(id) {
+    const duur = document.getElementById("duur_" + id).value;
+    const body = new URLSearchParams();
+    body.set("id", id);
+    body.set("duur_minuten", duur);
+    await fetch("/api/afspraak-update-status.php", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    });
+    loadDashboard();
   }
-});
 
-/* -------------------------
-   INITIAL LOAD
--------------------------- */
+  document.getElementById("logoutLink").addEventListener("click", async (e) => {
+    e.preventDefault();
+    await fetch("/api/logout.php", { credentials: "include" });
+    window.location.href = "/index.html";
+  });
 
-loadDashboard();
-loadTijdvakBeschikbaarheid();
-loadTijdvakkenForSelect();
-
-</script>
-
+  loadDashboard();
+  </script>
 </body>
+</html>

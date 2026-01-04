@@ -2,66 +2,166 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Klant Dashboard - JAS CAR WASH</title>
+  <title>Klant Dashboard - JAS Car Wash</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <img src="logo.jpeg" alt="JAS CAR WASH">
-  JAS CAR WASH
-</header>
-
-<div class="container">
-  <div class="card">
+  <header>
     <h1>Klant Dashboard</h1>
-    <a class="button" href="afspraak-maken.html">Nieuwe afspraak maken</a>
-    <a class="button" href="/api/logout.php">Uitloggen</a>
-  </div>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/info.html">Informatie</a>
+      <a href="#" id="logoutLink">Uitloggen</a>
+    </nav>
+  </header>
 
-  <div class="card">
-    <h2>Mijn gegevens</h2>
-    <div id="klant"></div>
-  </div>
+  <main>
+    <section class="card">
+      <h2>Jouw gegevens</h2>
+      <div id="klantInfo"></div>
+    </section>
 
-  <div class="card">
-    <h2>Mijn afspraken</h2>
-    <div id="afspraken"></div>
-  </div>
-</div>
+    <section class="card">
+      <h2>Nieuwe afspraak inplannen</h2>
+      <form id="afspraakForm">
+        <label>Datum:</label>
+        <input type="date" name="datum" id="datum" required>
 
-<div class="footer">© 2026 JAS CAR WASH</div>
+        <label>Pakket:</label>
+        <select name="prijs_id" id="pakketSelect" required></select>
 
-<script>
-async function loadDashboard() {
-  const response = await fetch("/api/klant-dashboard.php", {
-    credentials: 'include'
-  });
-  const data = await response.json();
+        <label>Tijdvakken:</label>
+        <div id="tijdvakken"></div>
 
-  if (data.error) {
-    alert(data.error);
-    window.location.href = "login.html";
-    return;
+        <button type="submit">Afspraak inplannen</button>
+      </form>
+      <div id="afspraakMessage"></div>
+    </section>
+
+    <section class="card">
+      <h2>Jouw afspraken</h2>
+      <div id="afspraken"></div>
+    </section>
+
+    <section class="card">
+      <h2>Prijzen</h2>
+      <div id="prijzen"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 JAS Car Wash</p>
+  </footer>
+
+  <script>
+  async function loadDashboard() {
+    const res = await fetch("/api/klant-dashboard.php", { credentials: "include" });
+    const data = await res.json();
+    if (data.status !== "OK") {
+      window.location.href = "/klant-login.html";
+      return;
+    }
+
+    const k = data.klant;
+    document.getElementById("klantInfo").innerHTML = `
+      <p><strong>Naam:</strong> ${k.naam}</p>
+      <p><strong>Auto:</strong> ${k.merk} ${k.model} (${k.nummerbord})</p>
+      <p><strong>Laatste bezoek:</strong> ${k.laatste_bezoek ?? '-'}</p>
+      <p><strong>Volgende afspraak:</strong> ${k.volgende_afspraak ?? '-'}</p>
+    `;
+
+    // Afspraken tonen
+    const afsprakenDiv = document.getElementById("afspraken");
+    afsprakenDiv.innerHTML = "";
+    data.afspraken.forEach(a => {
+      afsprakenDiv.innerHTML += `
+        <div class="afspraak-item">
+          <p><strong>Datum:</strong> ${a.datum} (${a.dagnaam})</p>
+          <p><strong>Tijd:</strong> ${a.starttijd} - ${a.eindtijd}</p>
+          <p><strong>Pakket:</strong> ${a.pakket_naam} (€ ${a.totale_prijs})</p>
+          <p><strong>Status:</strong> ${a.status}</p>
+        </div>
+      `;
+    });
+
+    // Prijzen tonen
+    const prijzenDiv = document.getElementById("prijzen");
+    prijzenDiv.innerHTML = "";
+    data.prijzen.forEach(p => {
+      prijzenDiv.innerHTML += `
+        <div class="prijs-item">
+          <strong>${p.naam}</strong><br>
+          ${p.beschrijving ?? ""}<br>
+          <strong>€ ${p.prijs}</strong>
+        </div>
+      `;
+    });
+
+    // Ook meteen pakketten in de select zetten
+    const pakketSelect = document.getElementById("pakketSelect");
+    pakketSelect.innerHTML = "";
+    data.prijzen.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${p.naam} (€ ${p.prijs})`;
+      pakketSelect.appendChild(opt);
+    });
   }
 
-  document.getElementById("klant").innerHTML = `
-    <p><strong>Naam:</strong> ${data.klant.naam}</p>
-    <p><strong>Auto:</strong> ${data.klant.merk} ${data.klant.model}</p>
-    <p><strong>Nummerbord:</strong> ${data.klant.nummerbord}</p>
-    <p><strong>Email:</strong> ${data.klant.email ?? "—"}</p>
-    <p><strong>Telefoon:</strong> ${data.klant.telefoon ?? "—"}</p>
-    <p><strong>Laatste bezoek:</strong> ${data.klant.laatste_bezoek ?? "—"}</p>
-    <p><strong>Volgende afspraak:</strong> ${data.klant.volgende_afspraak ?? "—"}</p>
-  `;
+  async function loadTijdvakken() {
+    const datum = document.getElementById("datum").value;
+    if (!datum) return;
+    const res = await fetch("/api/tijdvakken-beschikbaar.php?datum=" + encodeURIComponent(datum), {
+      credentials: "include"
+    });
+    const data = await res.json();
+    const div = document.getElementById("tijdvakken");
+    div.innerHTML = "";
 
-  let afsprakenHTML = "";
-  data.afspraken.forEach(a => {
-    afsprakenHTML += `<p>${a.datum} — ${a.starttijd} tot ${a.eindtijd}</p>`;
+    if (data.status !== "OK") {
+      div.innerHTML = "Geen tijdvakken beschikbaar.";
+      return;
+    }
+
+    data.tijdvakken.forEach(t => {
+      div.innerHTML += `
+        <label>
+          <input type="checkbox" name="tijdvakken[]" value="${t.id}">
+          ${t.starttijd} - ${t.eindtijd}
+        </label><br>
+      `;
+    });
+  }
+
+  document.getElementById("datum").addEventListener("change", loadTijdvakken);
+
+  document.getElementById("afspraakForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const res = await fetch("/api/afspraak-maken.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+    const data = await res.json();
+    const msg = document.getElementById("afspraakMessage");
+    if (data.status === "OK") {
+      msg.textContent = "Afspraak succesvol ingepland!";
+      e.target.reset();
+      document.getElementById("tijdvakken").innerHTML = "";
+      loadDashboard(); // afspraken opnieuw laden
+    } else {
+      msg.textContent = "Fout: " + data.message;
+    }
   });
-  document.getElementById("afspraken").innerHTML = afsprakenHTML || "Geen afspraken.";
-}
 
-loadDashboard();
-</script>
+  document.getElementById("logoutLink").addEventListener("click", async (e) => {
+    e.preventDefault();
+    await fetch("/api/logout.php", { credentials: "include" });
+    window.location.href = "/index.html";
+  });
+
+  loadDashboard();
+  </script>
 </body>
 </html>

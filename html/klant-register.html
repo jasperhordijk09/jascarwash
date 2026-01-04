@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Klant Registreren - JAS Car Wash</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Klant Registreren</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/klant-login.html">Inloggen</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Account aanmaken</h2>
+      <form id="registerForm">
+        <label>Naam:</label>
+        <input type="text" name="naam" required>
+
+        <label>Merk auto:</label>
+        <input type="text" name="merk" required>
+
+        <label>Model auto:</label>
+        <input type="text" name="model" required>
+
+        <label>Nummerbord:</label>
+        <input type="text" name="nummerbord" required>
+
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <label>Telefoon:</label>
+        <input type="text" name="telefoon">
+
+        <label>Wachtwoord:</label>
+        <input type="password" name="wachtwoord" required>
+
+        <button type="submit">Account aanmaken</button>
+      </form>
+
+      <div id="registerMessage"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 JAS Car Wash</p>
+  </footer>
+
+  <script>
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const res = await fetch("/api/klant-register.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    const msg = document.getElementById("registerMessage");
+
+    if (data.status === "OK") {
+      msg.textContent = "Account succesvol aangemaakt! Je kunt nu inloggen.";
+      e.target.reset();
+    } else {
+      msg.textContent = "Fout: " + data.message;
+    }
+  });
+  </script>
+</body>
+</html>
