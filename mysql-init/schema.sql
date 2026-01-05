@@ -91,7 +91,7 @@ CREATE TABLE afspraken (
     tijdvak_id INT NOT NULL,
     prijs_id INT NOT NULL,
     totale_prijs DECIMAL(10,2) NOT NULL,
-    status ENUM('gepland','bezig','geweest') DEFAULT 'gepland',
+    status ENUM('gepland','bezig','geweest','geannuleerd') DEFAULT 'gepland',
     duur_minuten INT DEFAULT NULL,
     aangemaakt_op TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (klant_id) REFERENCES klanten(id) ON DELETE CASCADE,
