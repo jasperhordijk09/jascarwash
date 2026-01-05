@@ -17,17 +17,20 @@ try {
         a.id,
         a.datum,
         DAYNAME(a.datum) AS dagnaam,
+        a.status,
+        a.totale_prijs,
         t.starttijd,
         t.eindtijd,
-        p.naam AS pakket_naam,
-        a.totale_prijs,
-        a.status
+        p.naam AS pakket_naam
       FROM afspraken a
       JOIN tijdvakken t ON a.tijdvak_id = t.id
       JOIN prijzen p ON a.prijs_id = p.id
       WHERE a.klant_id = ?
+        AND a.datum >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
       ORDER BY a.datum DESC, t.starttijd ASC
     ");
+$stmt->execute([$klant_id]);
+
     $stmt->execute([$klant_id]);
     $afspraken = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

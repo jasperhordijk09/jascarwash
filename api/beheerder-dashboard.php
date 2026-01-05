@@ -14,24 +14,26 @@ try {
 
     // Afspraken ophalen
     $stmt = $pdo->query("
-      SELECT 
-        a.id,
-        a.datum,
-        DAYNAME(a.datum) AS dagnaam,
-        a.status,
-        a.duur_minuten,
-        a.totale_prijs,
-        k.naam AS klant_naam,
-        k.nummerbord,
-        t.starttijd,
-        t.eindtijd,
-        p.naam AS pakket_naam
-      FROM afspraken a
-      JOIN klanten k ON a.klant_id = k.id
-      JOIN tijdvakken t ON a.tijdvak_id = t.id
-      JOIN prijzen p ON a.prijs_id = p.id
-      ORDER BY a.datum DESC, t.starttijd ASC
-    ");
+        SELECT 
+            a.id,
+            a.datum,
+            DAYNAME(a.datum) AS dagnaam,
+            a.status,
+            a.duur_minuten,
+            a.totale_prijs,
+            k.naam AS klant_naam,
+            k.nummerbord,
+            t.starttijd,
+            t.eindtijd,
+            p.naam AS pakket_naam
+        FROM afspraken a
+        JOIN klanten k ON a.klant_id = k.id
+        JOIN tijdvakken t ON a.tijdvak_id = t.id
+        JOIN prijzen p ON a.prijs_id = p.id
+        WHERE a.datum >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        ORDER BY a.datum DESC, t.starttijd ASC
+");
+
     $afspraken = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Prijzen ophalen
