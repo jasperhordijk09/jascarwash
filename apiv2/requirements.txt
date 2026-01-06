@@ -1,0 +1,12 @@
+fastapi[standard]==0.128.0
+pydantic==2.8.0
+uvicorn[standard]==0.40.0
+PyJWT==2.10.1
+bcrypt==3.2.2   # do not change otherwise passlib will not work 
+passlib[bcrypt]==1.7.4
+sqlmodel==0.0.31
+alembic==1.17.1
+uuid6==2025.0.1
+pypdf==6.3.0
+pymysql==1.1.2
+# sudo apt install libmariadb-dev
