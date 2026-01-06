@@ -45,6 +45,8 @@ services:
     environment:
       TZ: Europe/Amsterdam
       DB_PATH: /data/database.db
+    ports:
+      - "11472:8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/openapi.json"]
       interval: 30s
