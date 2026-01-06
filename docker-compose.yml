@@ -7,23 +7,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: testdb
-    ports:
-      - "3306:3306"
+    # ports:
+      # - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - $docker_data_dir/jaspercarwash/:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
-
-  php:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: jasper_php
-    restart: always
-    volumes:
-      - ./html:/var/www/html
-      - ./api:/var/www/html/api
-    depends_on:
-      - mysql
 
   nginx:
     image: nginx:latest
@@ -35,7 +23,7 @@ services:
       - ./html:/var/www/html
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - php
+      - api
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -49,6 +37,17 @@ services:
       - "11470:80"
     depends_on:
       - mysql
-
-volumes:
-  mysql_data:
+  api:
+    build: 
+      context: ./apiv2
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      TZ: Europe/Amsterdam
+      DB_PATH: /data/database.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/openapi.json"]
+      interval: 30s
+      start_period: 5s
+      timeout: 5s
+      retries: 3
