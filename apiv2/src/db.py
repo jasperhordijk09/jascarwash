@@ -9,9 +9,9 @@ from sqlmodel import SQLModel, Session, create_engine
 from log import logger
 
 
-# DB_PATH: str = f"mysql+pymysql://user:password@localhost:3306/dbname"
-# engine: Engine = create_engine(DB_PATH)
-engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
+DB_PATH: str = f"mysql+pymysql://root:root@mysql:3306/jascarwash"
+engine: Engine = create_engine(DB_PATH)
+# engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
 
 
 def init():

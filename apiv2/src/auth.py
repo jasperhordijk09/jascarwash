@@ -15,7 +15,8 @@ from lib import sqlClasses
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_SECONDS = 900
-SECRET_KEY = secrets.token_hex(64)
+# SECRET_KEY = secrets.token_hex(64)
+SECRET_KEY = 'a3286f50cf9c2fb7fea67a70fcd26d343f9e0d97bb30ef214f2b2a68c0fca62ecce10ab809badea996d9c3db883375238fb4395ce88a7b2e5a026e451d8c6610'
 COOKIE_NAME = "jascarwash_access_token"
 
 router = APIRouter(prefix="/auth", tags=["auth"])
