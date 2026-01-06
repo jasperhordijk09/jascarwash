@@ -6,6 +6,8 @@ from fastapi import FastAPI, Request, Response
 
 
 import auth
+import routes.route as route
+
 import db
 from log import logger
 
@@ -62,6 +64,8 @@ async def refresh_jwt_middleware(request: Request, call_next):
 
 
 app.include_router(auth.router)
+app.include_router(route.router)
+
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",  # module_name:app_instance

@@ -1,14 +1,14 @@
-import db
 import auth
-from log import logger
-from lib.helpers import col
-from lib import sqlClasses
-from sqlmodel import or_, select
-from typing_extensions import Annotated
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 
 
-router = APIRouter(prefix="/v1")
+router = APIRouter(prefix="/v1",tags=["v1"])
 @router.get("/")
 async def get_sortTypes():
     return {"message": "Hello World"}
+@router.get("/needAuth")
+async def needAuth(current_user: auth.LoggedIn):
+    return {"message": "you are authenticated"}
+@router.get("/needAdmin")
+async def needAdmin(current_user: auth.Admin):
+    return {"message": "you are admin"}
