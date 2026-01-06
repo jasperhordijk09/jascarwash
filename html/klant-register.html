@@ -18,30 +18,19 @@
     <section class="card">
       <h2>Account aanmaken</h2>
       <form id="registerForm">
+
+        <label>Kenteken:</label>
+        <input type="text" id="kenteken" name="kenteken" required>
+        <button type="button" onclick="haalAutoData()">Auto ophalen</button>
+        <div id="autoInfo"></div>
         <label>Naam:</label>
         <input type="text" name="naam" required>
-
-        <label>Merk auto:</label>
-        <input type="text" name="merk" required>
-
-        <label>Model auto:</label>
-        <input type="text" name="model" required>
-
-        <label>Nummerbord:</label>
-        <input type="text" name="nummerbord" required>
-
-        <label>Email:</label>
-        <input type="email" name="email" required>
-
         <label>Telefoon:</label>
         <input type="text" name="telefoon">
-
         <label>Wachtwoord:</label>
         <input type="password" name="wachtwoord" required>
-
         <button type="submit">Account aanmaken</button>
       </form>
-
       <div id="registerMessage"></div>
     </section>
   </main>
@@ -71,5 +60,59 @@
     }
   });
   </script>
+  <script>
+async function haalAutoData() {
+  const kenteken = document.getElementById("kenteken").value.replace(/-/g, "").toUpperCase();
+
+  if (!kenteken) {
+    alert("Vul een kenteken in.");
+    return;
+  }
+
+  const url = "https://opendata.rdw.nl/resource/m9d7-ebf2.json?kenteken=" + kenteken;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (data.length === 0) {
+    document.getElementById("autoInfo").innerHTML = "<p style='color:red;'>Kenteken niet gevonden.</p>";
+    return;
+  }
+
+  const auto = data[0];
+
+  // Toon info
+  document.getElementById("autoInfo").innerHTML = `
+    <p><strong>Merk:</strong> ${auto.merk}</p>
+    <p><strong>Model:</strong> ${auto.handelsbenaming}</p>
+  `;
+
+  // Verstopte inputs voor backend
+  const form = document.getElementById("registerForm");
+
+  let merkInput = document.getElementById("merkHidden");
+  let modelInput = document.getElementById("modelHidden");
+
+  if (!merkInput) {
+    merkInput = document.createElement("input");
+    merkInput.type = "hidden";
+    merkInput.id = "merkHidden";
+    merkInput.name = "merk";
+    form.appendChild(merkInput);
+  }
+
+  if (!modelInput) {
+    modelInput = document.createElement("input");
+    modelInput.type = "hidden";
+    modelInput.id = "modelHidden";
+    modelInput.name = "model";
+    form.appendChild(modelInput);
+  }
+
+  merkInput.value = auto.merk;
+  modelInput.value = auto.handelsbenaming;
+}
+</script>
+
 </body>
 </html>

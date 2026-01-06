@@ -2,35 +2,32 @@
 header('Content-Type: application/json');
 
 try {
-    $pdo = new PDO('mysql:host=mysql;dbname=testdb;charset=utf8mb4', 'root', 'root');
+    $pdo = new PDO(
+        'mysql:host=mysql;dbname=testdb;charset=utf8mb4',
+        'root',
+        'root',
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
 
     $naam = $_POST['naam'] ?? '';
-    $merk = $_POST['merk'] ?? '';
-    $model = $_POST['model'] ?? '';
-    $nummerbord = $_POST['nummerbord'] ?? '';
-    $email = $_POST['email'] ?? '';
     $telefoon = $_POST['telefoon'] ?? '';
     $wachtwoord = $_POST['wachtwoord'] ?? '';
+    $kenteken = $_POST['kenteken'] ?? '';
+    $merk = $_POST['merk'] ?? '';
+    $model = $_POST['model'] ?? '';
 
-    if (!$naam || !$merk || !$model || !$nummerbord || !$email || !$wachtwoord) {
+    if (!$naam || !$wachtwoord || !$kenteken || !$merk || !$model) {
         echo json_encode(["status" => "ERROR", "message" => "Niet alle velden zijn ingevuld"]);
-        exit;
-    }
-
-    $stmt = $pdo->prepare("SELECT id FROM klanten WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetch()) {
-        echo json_encode(["status" => "ERROR", "message" => "Email bestaat al"]);
         exit;
     }
 
     $hash = password_hash($wachtwoord, PASSWORD_DEFAULT);
 
     $stmt = $pdo->prepare("
-        INSERT INTO klanten (naam, merk, model, nummerbord, email, telefoon, wachtwoord)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO klanten (naam, telefoon, wachtwoord, nummerbord, merk, model)
+        VALUES (?, ?, ?, ?, ?, ?)
     ");
-    $stmt->execute([$naam, $merk, $model, $nummerbord, $email, $telefoon, $hash]);
+    $stmt->execute([$naam, $telefoon, $hash, $kenteken, $merk, $model]);
 
     echo json_encode(["status" => "OK"]);
 
