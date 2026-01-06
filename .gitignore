@@ -1,0 +1,4 @@
+jaspercarwash/
+.venv/
+__pycache__/
+*.pyc
