@@ -2,3 +2,5 @@ jaspercarwash/
 .venv/
 __pycache__/
 *.pyc
+old-version/
+mysql-init/
