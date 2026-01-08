@@ -9,7 +9,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "apiv2/src/main.py",
+            "program": "api/src/main.py",
             "console": "integratedTerminal"
         }
     ]

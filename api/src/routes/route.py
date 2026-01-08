@@ -1,5 +1,7 @@
+from pydantic import BaseModel
 import auth
 from fastapi import APIRouter
+import requests
 
 
 router = APIRouter(prefix="/v1",tags=["v1"])
@@ -13,3 +15,15 @@ async def needAuth(current_user: auth.LoggedIn):
 @router.get("/needAdmin")
 async def needAdmin(current_user: auth.Admin):
     return {"message": "you are admin"}
+class NumberplateData(BaseModel):
+    kenteken: str
+    merk: str
+    handelsbenaming: str
+
+@router.get("/numberplate/{numberplate}",response_model=list[NumberplateData])
+async def get_numberplate(numberplate: str) -> list[NumberplateData]:
+    url = f"https://opendata.rdw.nl/resource/m9d7-ebf2.json?$where=kenteken%20LIKE%20%27{numberplate.upper()}%25%27&$select=kenteken,merk,handelsbenaming"
+    response = requests.get(url)
+    data = response.json()
+    return [NumberplateData(**item) for item in data]
+    

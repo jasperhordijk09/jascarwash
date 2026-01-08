@@ -11,7 +11,7 @@ from log import logger
 
 DB_PATH: str = f"mysql+pymysql://root:root@mysql:3306/jascarwash"
 engine: Engine = create_engine(DB_PATH)
-# engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
+engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
 
 
 def init():
