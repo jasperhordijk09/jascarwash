@@ -19,11 +19,11 @@
     <section class="card">
       <h2>Inloggen</h2>
       <form id="loginForm">
-        <label>Email:</label>
-        <input type="email" name="email" required>
+        <label>Username:</label>
+        <input name="username" required>
 
         <label>Wachtwoord:</label>
-        <input type="password" name="wachtwoord" required>
+        <input type="password" name="password" required>
 
         <button type="submit">Inloggen</button>
       </form>
@@ -38,18 +38,19 @@
   <script>
   document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const res = await fetch("/api/login-klant.php", {
+    const form = e.target;
+    const username = form.username.value;
+    const password = form.password.value;
+    const url = `/api/auth/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`; 
+    const res = await fetch(url, {
       method: "POST",
-      body: formData,
-      credentials: "include"
     });
     const data = await res.json();
     const msg = document.getElementById("loginMessage");
-    if (data.status === "OK") {
+    if (res.status === 200) {
       window.location.href = "/klant-dashboard.html";
     } else {
-      msg.textContent = "Fout: " + data.message;
+      msg.textContent = "Fout: " + data.detail;
     }
   });
   </script>
