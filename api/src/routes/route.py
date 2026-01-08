@@ -3,6 +3,7 @@ from fastapi import APIRouter
 
 
 router = APIRouter(prefix="/v1",tags=["v1"])
+@router.get("")
 @router.get("/")
 async def get_sortTypes():
     return {"message": "Hello World"}
