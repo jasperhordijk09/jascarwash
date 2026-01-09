@@ -313,3 +313,7 @@ async def change_permissions(
     session.add(user)
     session.commit()
     return {"message": "Permissions changed successfully"}
+@router.get("/list-users")
+async def list_users(session: db.session,current_user: Admin) -> list[sqlClasses.User]:
+    users = session.exec(select(sqlClasses.User)).all()
+    return list(users)
