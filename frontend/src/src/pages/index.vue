@@ -1,5 +1,5 @@
 <template>
-  <HelloWorld />
+  <TopBar />
 </template>
 
 <script lang="ts" setup>

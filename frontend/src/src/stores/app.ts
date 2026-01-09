@@ -1,8 +1,8 @@
 // Utilities
 import { defineStore } from 'pinia'
-
-export const useAppStore = defineStore('app', {
+import {type User} from "@/api/models";
+export const useAppStore = defineStore('jascarwashAppStore', {
   state: () => ({
-    //
+    me: ref<User | null>(null),
   }),
 })
