@@ -10,8 +10,12 @@ from log import logger
 
 
 DB_PATH: str = f"mysql+pymysql://root:root@mysql:3306/jascarwash"
-engine: Engine = create_engine(DB_PATH)
-engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
+if os.getenv("DEVMODE") == "true":
+    logger.warning("Using in memory sqlite")
+    engine: Engine = create_engine("sqlite://", connect_args={"check_same_thread": False})
+else:
+    logger.info("Using MySQL")
+    engine: Engine = create_engine(DB_PATH)
 
 
 def init():
