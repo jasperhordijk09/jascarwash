@@ -239,6 +239,7 @@ async def register_user(
             hashed_password=passwordHash,
         )
     )
+    session.commit()
     newuser = get_user(username, session)
     if not newuser:
         raise HTTPException(status_code=500, detail="User registration failed")
