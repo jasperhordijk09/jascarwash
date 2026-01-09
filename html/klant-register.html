@@ -10,7 +10,7 @@
     <h1>Klant Registreren</h1>
     <nav>
       <a href="/index.html">Home</a>
-      <a href="/klant-login.html">Inloggen</a>
+      <a href="/login.html">Inloggen</a>
     </nav>
   </header>
 
@@ -44,7 +44,7 @@
     e.preventDefault();
     const formData = new FormData(e.target);
 
-    const res = await fetch("/api/klant-register.php", {
+    const res = await fetch("/api/register.php", {
       method: "POST",
       body: formData
     });

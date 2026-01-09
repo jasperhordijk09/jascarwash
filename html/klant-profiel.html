@@ -10,7 +10,7 @@
 <header>
   <h1>Klant Profiel</h1>
   <nav>
-    <a href="/klant-dashboard.html">Dashboard</a>
+    <a href="/dashboard.html">Dashboard</a>
     <span id="darkToggle">🌙 / ☀️</span>
     <a href="#" id="logoutLink">Uitloggen</a>
   </nav>
@@ -98,11 +98,11 @@ applyDarkMode();
    PROFIEL LADEN
 ============================ */
 async function loadProfiel() {
-  const res = await fetch("/api/klant-profiel-get.php", { credentials: "include" });
+  const res = await fetch("/api/profiel-get.php", { credentials: "include" });
   const data = await res.json();
 
   if (data.status !== "OK") {
-    window.location.href = "/klant-login.html";
+    window.location.href = "/login.html";
     return;
   }
 
@@ -123,7 +123,7 @@ document.getElementById("profielForm").addEventListener("submit", async (e) => {
 
   const formData = new FormData(e.target);
 
-  const res = await fetch("/api/klant-profiel-update.php", {
+  const res = await fetch("/api/profiel-update.php", {
     method: "POST",
     body: formData,
     credentials: "include"
@@ -145,7 +145,7 @@ document.getElementById("wachtwoordForm").addEventListener("submit", async (e) =
 
   const formData = new FormData(e.target);
 
-  const res = await fetch("/api/klant-wachtwoord-update.php", {
+  const res = await fetch("/api/wachtwoord-update.php", {
     method: "POST",
     body: formData,
     credentials: "include"
