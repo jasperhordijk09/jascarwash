@@ -1,6 +1,5 @@
 <template>
   <v-app-bar app color="primary" elevate-on-scroll class="d-flex align-center justify-space-between">
-
     <v-toolbar-title class="text-h6">
       Jascarwash
     </v-toolbar-title>
