@@ -10,7 +10,7 @@ services:
     # ports:
     # - "3306:3306"
     volumes:
-      - $docker_data_dir/jaspercarwash/:/var/lib/mysql
+      - ./jaspercarwash/:/var/lib/mysql
     healthcheck:
       test:
         [
