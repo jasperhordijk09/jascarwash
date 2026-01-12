@@ -12,9 +12,7 @@
     <v-btn icon @click="router.push('/login')">
       <v-icon icon="mdi-account" />
     </v-btn>
-    <v-btn icon @click="router.push('/menu')">
-      <v-icon icon="mdi-menu" />
-    </v-btn>
+    <top-bar-menu />
   </v-app-bar>
 </template>
 
