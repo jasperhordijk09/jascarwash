@@ -65,9 +65,16 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/regristreren': RouteRecordInfo<
-      '/regristreren',
-      '/regristreren',
+    '/register': RouteRecordInfo<
+      '/register',
+      '/register',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/user/cars': RouteRecordInfo<
+      '/user/cars',
+      '/user/cars',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -75,6 +82,13 @@ declare module 'vue-router/auto-routes' {
     '/user/dashboard': RouteRecordInfo<
       '/user/dashboard',
       '/user/dashboard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/user/profile': RouteRecordInfo<
+      '/user/profile',
+      '/user/profile',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -128,15 +142,27 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/regristreren.vue': {
+    'src/pages/register.vue': {
       routes:
-        | '/regristreren'
+        | '/register'
+      views:
+        | never
+    }
+    'src/pages/user/cars.vue': {
+      routes:
+        | '/user/cars'
       views:
         | never
     }
     'src/pages/user/dashboard.vue': {
       routes:
         | '/user/dashboard'
+      views:
+        | never
+    }
+    'src/pages/user/profile.vue': {
+      routes:
+        | '/user/profile'
       views:
         | never
     }

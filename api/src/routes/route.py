@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import auth
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 import requests
 
@@ -41,7 +41,6 @@ async def get_numberplate(numberplate: str) -> list[NumberplateData]:
     return [NumberplateData(**item) for item in data]
 
 
-
 class RegisterCarResponse(BaseModel):
     message: str
     car: sqlClasses.Car
@@ -53,7 +52,11 @@ async def register_car(
     current_user: auth.LoggedIn,
     license_plate: str,
     notes: str | None = None,
-):
+) -> RegisterCarResponse:
+    if not vehicleInfo.getVehicleInfo(license_plate):
+        raise HTTPException(
+            status_code=400, detail="Vehicle not found in RDW database"
+        )
     newCar = sqlClasses.Car(
         license_plate=license_plate, notes=notes, owner_id=current_user.id
     )
@@ -62,15 +65,23 @@ async def register_car(
     session.refresh(newCar)
     return RegisterCarResponse(message="Car registered", car=newCar)
 
+
 @router.get("/cars", response_model=list[classes.FullCarData])
 async def get_cars(session: db.session, current_user: auth.LoggedIn):
-    cars = list(session.exec(select(sqlClasses.Car).where(sqlClasses.Car.owner_id == current_user.id)).all())
+    cars = list(
+        session.exec(
+            select(sqlClasses.Car).where(sqlClasses.Car.owner_id == current_user.id)
+        ).all()
+    )
     carInfo = []
     for car in cars:
-        currentVehicleInfo = vehicleInfo.get_vehicle_info(car.license_plate)
+        currentVehicleInfo = vehicleInfo.getVehicleInfo(car.license_plate)
         if currentVehicleInfo:
             dictA = dict(car)
             dictB = dict(currentVehicleInfo)
             combinedDict = dictA | dictB
+            combinedDict["license_plate"] = vehicleInfo.dashLicensePlate(
+                combinedDict["license_plate"]
+            )
             carInfo.append(classes.FullCarData(**combinedDict))
-    return carInfo                       
+    return carInfo

@@ -3,6 +3,7 @@
     <router-view />
   </v-main>
   <template v-if="route.path !== '/login'">
+    <nav-bar />
     <AppFooter />
     <TopBar />
   </template>

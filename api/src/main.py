@@ -71,7 +71,7 @@ if __name__ == "__main__":
         "main:app",  # module_name:app_instance
         # app,
         host="0.0.0.0",
-        port=8000,
+        port=11472,
         reload=True,  # equivalent to --reload
         log_level="debug",  # equivalent to --log-level debug
     )
