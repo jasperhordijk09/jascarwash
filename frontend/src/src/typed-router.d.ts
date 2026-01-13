@@ -65,6 +65,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/regristreren': RouteRecordInfo<
+      '/regristreren',
+      '/regristreren',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/user/dashboard': RouteRecordInfo<
+      '/user/dashboard',
+      '/user/dashboard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
   }
 
   /**
@@ -111,6 +125,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/login.vue': {
       routes:
         | '/login'
+      views:
+        | never
+    }
+    'src/pages/regristreren.vue': {
+      routes:
+        | '/regristreren'
+      views:
+        | never
+    }
+    'src/pages/user/dashboard.vue': {
+      routes:
+        | '/user/dashboard'
       views:
         | never
     }

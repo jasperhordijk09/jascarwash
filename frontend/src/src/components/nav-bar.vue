@@ -15,9 +15,16 @@
       </v-list>
       <v-divider />
     </template>
+    <template v-if="appStore.me?.permissions ?? 0 > 1">
+
+      <v-list density="compact" nav>
+        <v-list-item prepend-icon="mdi-cog" title="Admin Settings" @click="router.push('/admin/settings')" />
+      </v-list>
+    </template>
     <v-divider />
     <v-list>
 
+      <v-list-item prepend-icon="mdi-account-plus" title="Register" @click="router.push('/regristreren')" v-if="!appStore.me" />
       <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout" v-if="appStore.me" />
     </v-list>
   </v-navigation-drawer>
