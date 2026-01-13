@@ -1,38 +1,38 @@
 
-# User
+# FullCarData
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
+`license_plate` | string
+`make` | string
+`model` | string
+`vehicle_type` | string
+`color` | string
 `id` | string
-`username` | string
-`full_name` | string
-`email` | string
-`phone` | string
-`hashed_password` | string
-`disabled` | boolean
 `created_at` | Date
-`permissions` | number
+`notes` | string
+`owner_id` | string
 
 ## Example
 
 ```typescript
-import type { User } from ''
+import type { FullCarData } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "license_plate": null,
+  "make": null,
+  "model": null,
+  "vehicle_type": null,
+  "color": null,
   "id": null,
-  "username": null,
-  "full_name": null,
-  "email": null,
-  "phone": null,
-  "hashed_password": null,
-  "disabled": null,
   "created_at": null,
-  "permissions": null,
-} satisfies User
+  "notes": null,
+  "owner_id": null,
+} satisfies FullCarData
 
 console.log(example)
 
@@ -41,7 +41,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as User
+const exampleParsed = JSON.parse(exampleJSON) as FullCarData
 console.log(exampleParsed)
 ```
 

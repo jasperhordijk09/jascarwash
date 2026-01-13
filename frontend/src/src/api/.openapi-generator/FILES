@@ -1,8 +1,8 @@
-.openapi-generator-ignore
 apis/AuthApi.ts
 apis/V1Api.ts
 apis/index.ts
 docs/AuthApi.md
+docs/FullCarData.md
 docs/HTTPValidationError.md
 docs/LogoutReturn.md
 docs/NumberplateData.md
@@ -12,6 +12,7 @@ docs/V1Api.md
 docs/ValidationError.md
 docs/ValidationErrorLocInner.md
 index.ts
+models/FullCarData.ts
 models/HTTPValidationError.ts
 models/LogoutReturn.ts
 models/NumberplateData.ts

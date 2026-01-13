@@ -48,6 +48,12 @@ export interface User {
      * @type {string}
      * @memberof User
      */
+    phone?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
     hashed_password: string;
     /**
      * 
@@ -92,6 +98,7 @@ export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User
         'username': json['username'],
         'full_name': json['full_name'] == null ? undefined : json['full_name'],
         'email': json['email'] == null ? undefined : json['email'],
+        'phone': json['phone'] == null ? undefined : json['phone'],
         'hashed_password': json['hashed_password'],
         'disabled': json['disabled'] == null ? undefined : json['disabled'],
         'created_at': json['created_at'] == null ? undefined : (new Date(json['created_at'])),
@@ -114,6 +121,7 @@ export function UserToJSONTyped(value?: User | null, ignoreDiscriminator: boolea
         'username': value['username'],
         'full_name': value['full_name'],
         'email': value['email'],
+        'phone': value['phone'],
         'hashed_password': value['hashed_password'],
         'disabled': value['disabled'],
         'created_at': value['created_at'] == null ? value['created_at'] : value['created_at'].toISOString(),

@@ -4,12 +4,71 @@ All URIs are relative to *http://127.0.0.1:8000/api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
+| [**getCarsV1CarsGet**](V1Api.md#getcarsv1carsget) | **GET** /v1/cars | Get Cars |
 | [**getNumberplateV1NumberplateNumberplateGet**](V1Api.md#getnumberplatev1numberplatenumberplateget) | **GET** /v1/numberplate/{numberplate} | Get Numberplate |
 | [**getSortTypesV1Get**](V1Api.md#getsorttypesv1get) | **GET** /v1/ | Get Sorttypes |
 | [**getSortTypesV1Get_0**](V1Api.md#getsorttypesv1get_0) | **GET** /v1 | Get Sorttypes |
 | [**needAdminV1NeedAdminGet**](V1Api.md#needadminv1needadminget) | **GET** /v1/needAdmin | Needadmin |
 | [**needAuthV1NeedAuthGet**](V1Api.md#needauthv1needauthget) | **GET** /v1/needAuth | Needauth |
+| [**registerCarV1CarRegisterPost**](V1Api.md#registercarv1carregisterpost) | **POST** /v1/car/register | Register Car |
 
+
+
+## getCarsV1CarsGet
+
+> Array&lt;FullCarData&gt; getCarsV1CarsGet()
+
+Get Cars
+
+### Example
+
+```ts
+import {
+  Configuration,
+  V1Api,
+} from '';
+import type { GetCarsV1CarsGetRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const api = new V1Api();
+
+  try {
+    const data = await api.getCarsV1CarsGet();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**Array&lt;FullCarData&gt;**](FullCarData.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful Response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
 ## getNumberplateV1NumberplateNumberplateGet
@@ -302,6 +361,75 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful Response |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## registerCarV1CarRegisterPost
+
+> any registerCarV1CarRegisterPost(licensePlate, notes)
+
+Register Car
+
+### Example
+
+```ts
+import {
+  Configuration,
+  V1Api,
+} from '';
+import type { RegisterCarV1CarRegisterPostRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const api = new V1Api();
+
+  const body = {
+    // string
+    licensePlate: licensePlate_example,
+    // string (optional)
+    notes: notes_example,
+  } satisfies RegisterCarV1CarRegisterPostRequest;
+
+  try {
+    const data = await api.registerCarV1CarRegisterPost(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **licensePlate** | `string` |  | [Defaults to `undefined`] |
+| **notes** | `string` |  | [Optional] [Defaults to `undefined`] |
+
+### Return type
+
+**any**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful Response |  -  |
+| **422** | Validation Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

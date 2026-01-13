@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './FullCarData';
 export * from './HTTPValidationError';
 export * from './LogoutReturn';
 export * from './NumberplateData';

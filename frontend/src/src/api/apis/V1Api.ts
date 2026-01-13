@@ -15,10 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
+  FullCarData,
   HTTPValidationError,
   NumberplateData,
 } from '../models/index';
 import {
+    FullCarDataFromJSON,
+    FullCarDataToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     NumberplateDataFromJSON,
@@ -29,10 +32,44 @@ export interface GetNumberplateV1NumberplateNumberplateGetRequest {
     numberplate: string;
 }
 
+export interface RegisterCarV1CarRegisterPostRequest {
+    licensePlate: string;
+    notes?: string | null;
+}
+
 /**
  * 
  */
 export class V1Api extends runtime.BaseAPI {
+
+    /**
+     * Get Cars
+     */
+    async getCarsV1CarsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<FullCarData>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/v1/cars`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(FullCarDataFromJSON));
+    }
+
+    /**
+     * Get Cars
+     */
+    async getCarsV1CarsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<FullCarData>> {
+        const response = await this.getCarsV1CarsGetRaw(initOverrides);
+        return await response.value();
+    }
 
     /**
      * Get Numberplate
@@ -200,6 +237,54 @@ export class V1Api extends runtime.BaseAPI {
      */
     async needAuthV1NeedAuthGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.needAuthV1NeedAuthGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Register Car
+     */
+    async registerCarV1CarRegisterPostRaw(requestParameters: RegisterCarV1CarRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters['licensePlate'] == null) {
+            throw new runtime.RequiredError(
+                'licensePlate',
+                'Required parameter "licensePlate" was null or undefined when calling registerCarV1CarRegisterPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['licensePlate'] != null) {
+            queryParameters['license_plate'] = requestParameters['licensePlate'];
+        }
+
+        if (requestParameters['notes'] != null) {
+            queryParameters['notes'] = requestParameters['notes'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/v1/car/register`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Register Car
+     */
+    async registerCarV1CarRegisterPost(requestParameters: RegisterCarV1CarRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.registerCarV1CarRegisterPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

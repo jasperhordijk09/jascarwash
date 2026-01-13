@@ -27,7 +27,6 @@ class Car(SQLModel, table=True):
     license_plate: str = Field(index=True, nullable=False, unique=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     notes: Optional[str] = None
-
     owner_id: Optional[str] = Field(default=None, foreign_key="users.id")
 
     owner: Optional[User] = Relationship(back_populates="cars")

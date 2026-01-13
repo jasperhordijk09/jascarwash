@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 import auth
 from fastapi import APIRouter
+from sqlmodel import select
 import requests
 
 import db
-from lib import sqlClasses
+from lib import classes, sqlClasses, vehicleInfo
 
 
 router = APIRouter(prefix="/v1", tags=["v1"])
@@ -40,6 +41,12 @@ async def get_numberplate(numberplate: str) -> list[NumberplateData]:
     return [NumberplateData(**item) for item in data]
 
 
+
+class RegisterCarResponse(BaseModel):
+    message: str
+    car: sqlClasses.Car
+
+
 @router.post("/car/register")
 async def register_car(
     session: db.session,
@@ -52,4 +59,18 @@ async def register_car(
     )
     session.add(newCar)
     session.commit()
-    return {"message": "Car registered successfully", "car": newCar}
+    session.refresh(newCar)
+    return RegisterCarResponse(message="Car registered", car=newCar)
+
+@router.get("/cars", response_model=list[classes.FullCarData])
+async def get_cars(session: db.session, current_user: auth.LoggedIn):
+    cars = list(session.exec(select(sqlClasses.Car).where(sqlClasses.Car.owner_id == current_user.id)).all())
+    carInfo = []
+    for car in cars:
+        currentVehicleInfo = vehicleInfo.get_vehicle_info(car.license_plate)
+        if currentVehicleInfo:
+            dictA = dict(car)
+            dictB = dict(currentVehicleInfo)
+            combinedDict = dictA | dictB
+            carInfo.append(classes.FullCarData(**combinedDict))
+    return carInfo                       
