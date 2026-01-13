@@ -72,13 +72,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/user/cars': RouteRecordInfo<
-      '/user/cars',
-      '/user/cars',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/user/dashboard': RouteRecordInfo<
       '/user/dashboard',
       '/user/dashboard',
@@ -145,12 +138,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/register.vue': {
       routes:
         | '/register'
-      views:
-        | never
-    }
-    'src/pages/user/cars.vue': {
-      routes:
-        | '/user/cars'
       views:
         | never
     }
