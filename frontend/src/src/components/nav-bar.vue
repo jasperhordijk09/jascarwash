@@ -15,10 +15,6 @@
       </v-list>
       <v-divider />
     </template>
-    <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-calendar-month" title="my Appointments"></v-list-item>
-      <v-list-item prepend-icon="mdi-car" title="My Cars"></v-list-item>
-    </v-list>
     <v-divider />
     <v-list>
 

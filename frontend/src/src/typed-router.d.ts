@@ -30,6 +30,34 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/admin/appointments': RouteRecordInfo<
+      '/admin/appointments',
+      '/admin/appointments',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/admin/cars': RouteRecordInfo<
+      '/admin/cars',
+      '/admin/cars',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/admin/dashboard': RouteRecordInfo<
+      '/admin/dashboard',
+      '/admin/dashboard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/admin/users': RouteRecordInfo<
+      '/admin/users',
+      '/admin/users',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/login': RouteRecordInfo<
       '/login',
       '/login',
@@ -53,6 +81,30 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index.vue': {
       routes:
         | '/'
+      views:
+        | never
+    }
+    'src/pages/admin/appointments.vue': {
+      routes:
+        | '/admin/appointments'
+      views:
+        | never
+    }
+    'src/pages/admin/cars.vue': {
+      routes:
+        | '/admin/cars'
+      views:
+        | never
+    }
+    'src/pages/admin/dashboard.vue': {
+      routes:
+        | '/admin/dashboard'
+      views:
+        | never
+    }
+    'src/pages/admin/users.vue': {
+      routes:
+        | '/admin/users'
       views:
         | never
     }
