@@ -24,4 +24,12 @@ def dashLicensePlate(license_plate: str) -> str:
             lastCharIsdigit = char.isdigit()
         newLicensePlate += char
     newLicensePlate = newLicensePlate.strip("-")
+    parts = []
+    for part in newLicensePlate.split("-"):
+        if len(part) == 4:
+            parts.append(part[:2])
+            parts.append(part[2:])
+        else:
+            parts.append(part)
+    newLicensePlate = "-".join(parts)
     return newLicensePlate
