@@ -1,34 +1,30 @@
 <template>
-  <v-main>
-    <router-view />
-    <nav-bar />
-    <v-container>
-      <h1>Users</h1>
-      <v-row>
-        <v-col v-for="user in users" :key="user.id" cols="12" md="4" sm="6">
-          <v-card elevation="8" color="primary-darken-1" class="user-card">
-            <v-card-title>
-              <v-icon>mdi-user</v-icon>
-              {{ user.username }}
-            </v-card-title>
-            <v-card-text>
-              Email: {{ user.email }}<br>
-              Full Name: {{ user.full_name }}<br>
-              Phone: {{ user.phone }}<br>
-              Disabled: {{ user.disabled ? 'Yes' : 'No' }}<br>
-              Created At: {{ user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A' }}<br>
-              Permissions: {{ user.permissions }}<br>
-              <span v-if="user.carData">
-                Car Brand: {{ user.carData.merk }}<br>
-                Car Model: {{ user.carData.handelsbenaming }}<br>
-                License Plate: {{ user.carData.kenteken }}
-              </span>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+  <v-container>
+    <h1>Users</h1>
+    <v-row>
+      <v-col v-for="user in users" :key="user.id" cols="12" md="4" sm="6">
+        <v-card elevation="8" color="primary-darken-1" class="user-card">
+          <v-card-title>
+            <v-icon>mdi-user</v-icon>
+            {{ user.username }}
+          </v-card-title>
+          <v-card-text>
+            Email: {{ user.email }}<br>
+            Full Name: {{ user.full_name }}<br>
+            Phone: {{ user.phone }}<br>
+            Disabled: {{ user.disabled ? 'Yes' : 'No' }}<br>
+            Created At: {{ user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A' }}<br>
+            Permissions: {{ user.permissions }}<br>
+            <span v-if="user.carData">
+              Car Brand: {{ user.carData.merk }}<br>
+              Car Model: {{ user.carData.handelsbenaming }}<br>
+              License Plate: {{ user.carData.kenteken }}
+            </span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts" setup>

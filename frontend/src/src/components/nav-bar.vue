@@ -8,7 +8,6 @@
     <template v-if="appStore.me?.permissions ?? 0 > 0">
 
       <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-view-dashboard" title="Admin Dashboard" @click="router.push('/admin/dashboard')" />
         <v-list-item prepend-icon="mdi-account-multiple" title="Users" @click="router.push('/admin/users')" />
         <v-list-item prepend-icon="mdi-calendar-month" title="Appointments" @click="router.push('/admin/appointments')" />
         <v-list-item prepend-icon="mdi-car" title="Cars" @click="router.push('/admin/cars')" />
@@ -17,9 +16,7 @@
     </template>
       <v-list density="compact" nav>
         <v-list-item prepend-icon="mdi-view-dashboard" title="Dashboard" @click="router.push('/user/dashboard')" />
-        <v-list-item prepend-icon="mdi-calendar-check" title="My Appointments" @click="router.push('/user/appointments')" />
-        <v-list-item prepend-icon="mdi-car" title="My Cars" @click="router.push('/user/cars')" />
-      </v-list>
+        <v-list-item prepend-icon="mdi-calendar-check" title="My Appointments" @click="router.push('/user/appointments')" />      </v-list>
     <v-divider />
     <v-list>
 

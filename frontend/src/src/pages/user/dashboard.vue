@@ -1,114 +1,114 @@
 <template>
-  <v-main>
-    <v-container>
-      <h1>Welcome to your Dashboard, {{ appStore.me?.username }}</h1>
+  <v-container>
+    <h1>Welcome to your Dashboard, {{ appStore.me?.username }}</h1>
 
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-card class="pa-4" elevation="4">
-            <v-card-title>
-              <v-icon>mdi-account</v-icon>
-              Your Profile
-            </v-card-title>
-            <v-card-text>
-              <p><strong>Username:</strong> {{ appStore.me?.username }}</p>
-              <p><strong>Email:</strong> {{ appStore.me?.email }}</p>
-              <p><strong>Full Name:</strong> {{ appStore.me?.full_name }}</p>
-              <p><strong>Phone:</strong> {{ appStore.me?.phone }}</p>
-            </v-card-text>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-card class="pa-4" elevation="4">
-            <v-card-title>
-              <v-icon>mdi-car</v-icon>
-              Your Cars
-            </v-card-title>
-            <v-card-text>
-              <p v-if="userCars.length === 0">No cars registered yet.</p>
-              <div v-else>
-                <v-chip v-for="car in userCars" :key="car.kenteken" class="ma-1">
-                  {{ car.merk }} {{ car.handelsbenaming }} - {{ car.kenteken }}
-                </v-chip>
-              </div>
-              <v-btn
-                class="mt-2"
-                color="primary"
-                text="Add Car"
-                variant="flat"
-                @click="addCarDialog = true"
-              />
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <v-row class="mt-4">
-        <v-col cols="12">
-          <v-card class="pa-4" elevation="4">
-            <v-card-title>
-              <v-icon>mdi-calendar</v-icon>
-              Upcoming Appointments
-            </v-card-title>
-            <v-card-text>
-              <p>No upcoming appointments.</p>
-              <v-btn
-                color="primary"
-                @click="bookAppointment"
-              >
-                Book Appointment
-              </v-btn>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <!-- Add Car Dialog -->
-      <v-dialog v-model="addCarDialog" max-width="500">
-        <v-card
-          class="pa-4"
-          title="Add a car"
-        >
-          <!-- Horizontal layout for text field + button -->
-          <div style="display: flex; align-items: center; gap: 32px;">
-            <v-text-field
-              v-model="newLicensePlate"
-              label="License Plate"
-              density="comfortable"
-              max-length="6"
-              outlined
-              style="flex: 1;"
-              title="License Plate"
-            />
-          </div>
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              variant="flat"
-              @click="addCar(newLicensePlate.value)"
-            >
-              Add
-            </v-btn>
-            <v-btn
-              color="primary"
-              variant="flat"
-              @click="addCarDialog = false"
-            >
-              cancel
-            </v-btn>
-          </v-card-actions>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card class="pa-4" elevation="4">
+          <v-card-title>
+            <v-icon>mdi-account</v-icon>
+            Your Profile
+          </v-card-title>
+          <v-card-text>
+            <p><strong>Username:</strong> {{ appStore.me?.username }}</p>
+            <p><strong>Email:</strong> {{ appStore.me?.email }}</p>
+            <p><strong>Full Name:</strong> {{ appStore.me?.full_name }}</p>
+            <p><strong>Phone:</strong> {{ appStore.me?.phone }}</p>
+          </v-card-text>
         </v-card>
-      </v-dialog>
-    </v-container>
-  </v-main>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card class="pa-4" elevation="4">
+          <v-card-title>
+            <v-icon>mdi-car</v-icon>
+            Your Cars
+          </v-card-title>
+          <v-card-text>
+            <p v-if="userCars.length === 0">No cars registered yet.</p>
+            <div v-else>
+              <v-chip v-for="car in userCars" :key="car.kenteken" class="ma-1">
+                {{ car.merk }} {{ car.handelsbenaming }} - {{ car.kenteken }}
+              </v-chip>
+            </div>
+            <v-btn
+              class="mt-2"
+              color="primary"
+              text="Add Car"
+              variant="flat"
+              @click="addCarDialog = true"
+            />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row class="mt-4">
+      <v-col cols="12">
+        <v-card class="pa-4" elevation="4">
+          <v-card-title>
+            <v-icon>mdi-calendar</v-icon>
+            Upcoming Appointments
+          </v-card-title>
+          <v-card-text>
+            <p>No upcoming appointments.</p>
+            <v-btn
+              color="primary"
+              @click="bookAppointment"
+            >
+              Book Appointment
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Add Car Dialog -->
+    <v-dialog v-model="addCarDialog" max-width="500">
+      <v-card
+        class="pa-4"
+        title="Add a car"
+      >
+        <!-- Horizontal layout for text field + button -->
+        <div style="display: flex; align-items: center; gap: 32px;">
+          <v-text-field
+            v-model="newLicensePlate"
+            density="comfortable"
+            label="License Plate"
+            max-length="6"
+            outlined
+            style="flex: 1;"
+          />
+        </div>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            variant="flat"
+            @click="addCar(newLicensePlate)"
+          >
+            Add
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="flat"
+            @click="addCarDialog = false"
+          >
+            cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script lang="ts" setup>
   import type { NumberplateData } from '@/api/models'
   import { onMounted, ref } from 'vue'
+  import { useRouter } from 'vue-router'
   import { useV1Api } from '@/lib/api'
   import { useAppStore } from '@/stores/app'
+
+  const router = useRouter()
 
   const appStore = useAppStore()
   const v1Api = useV1Api()
@@ -165,7 +165,7 @@
   }
 
   function bookAppointment () {
-    // Navigate to booking page
-    console.log('Book appointment')
+    // Navigate to appointments page
+    router.push('/user/appointments')
   }
 </script>

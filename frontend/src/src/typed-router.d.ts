@@ -44,13 +44,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/admin/dashboard': RouteRecordInfo<
-      '/admin/dashboard',
-      '/admin/dashboard',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/admin/users': RouteRecordInfo<
       '/admin/users',
       '/admin/users',
@@ -68,6 +61,13 @@ declare module 'vue-router/auto-routes' {
     '/register': RouteRecordInfo<
       '/register',
       '/register',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/user/appointments': RouteRecordInfo<
+      '/user/appointments',
+      '/user/appointments',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -117,12 +117,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/admin/dashboard.vue': {
-      routes:
-        | '/admin/dashboard'
-      views:
-        | never
-    }
     'src/pages/admin/users.vue': {
       routes:
         | '/admin/users'
@@ -138,6 +132,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/register.vue': {
       routes:
         | '/register'
+      views:
+        | never
+    }
+    'src/pages/user/appointments.vue': {
+      routes:
+        | '/user/appointments'
       views:
         | never
     }

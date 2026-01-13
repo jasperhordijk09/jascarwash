@@ -1,8 +1,5 @@
 <template>
-  <v-main>
-    <router-view />
-    <nav-bar />
-  </v-main>
+  <router-view />
 </template>
 
 <script lang="ts" setup>
