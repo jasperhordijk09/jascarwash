@@ -15,12 +15,6 @@
       </v-list>
       <v-divider />
     </template>
-    <template v-if="appStore.me?.permissions ?? 0 > 1">
-
-      <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-cog" title="Admin Settings" @click="router.push('/admin/settings')" />
-      </v-list>
-    </template>
     <v-divider />
     <v-list>
 
