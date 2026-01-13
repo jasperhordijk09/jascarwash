@@ -5,13 +5,6 @@
     </v-toolbar-title>
 
     <v-spacer />
-    <v-toolbar-title class="text-h6" v-if="appStore.me">
-      Welcome, {{ appStore.me.full_name ?? appStore.me.username }}
-    </v-toolbar-title>
-    <v-btn icon @click="router.push('/login')">
-      <v-icon icon="mdi-account" />
-    </v-btn>
-    <top-bar-menu />
   </v-app-bar>
 </template>
 

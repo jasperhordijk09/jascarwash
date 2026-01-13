@@ -2,8 +2,10 @@
   <v-main>
     <router-view />
   </v-main>
-
-  <AppFooter v-if="route.path !== '/login'" />
+  <template v-if="route.path !== '/login'">
+    <AppFooter />
+    <TopBar />
+  </template>
 </template>
 
 <script lang="ts" setup>

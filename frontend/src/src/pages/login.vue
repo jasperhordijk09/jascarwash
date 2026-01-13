@@ -35,6 +35,16 @@ const password = ref("");
 const error = ref("");
 const loading = ref(false);
 const authApi = useAuthApi();
+async function checkLogin() {
+  try {
+    const response = await authApi.whoIsCurrentUserAuthWhoamiGet();
+    if (response
+    ) {
+      AppStore.me = response;
+      router.push("/");
+    }
+  } catch (e) { }
+}
 async function login() {
   loading.value = true;
   try {
@@ -50,17 +60,10 @@ async function login() {
     }
     error.value = e.message || "Login failed";
   }
-  router.push("/");
   loading.value = false;
+  await checkLogin();
 }
-onMounted(async () => {
-  try {
-    const response = await authApi.whoIsCurrentUserAuthWhoamiGet();
-    if (response
-    ) {
-      router.push("/");
-      AppStore.me = response;
-    }
-  } catch (e) { }
-});
+
+
+onMounted(checkLogin);
 </script>

@@ -1,32 +1,43 @@
 <template>
-    <v-navigation-drawer
-        expand-on-hover
-        permanent
-        rail>
-      <v-list>
-        <v-list-item
-            prepend-icon="mdi-home"
-            title="Home"
-            value="home"
-            @click="router.push('/')"
-        >
-        </v-list-item>
-      </v-list>
+  <v-navigation-drawer expand-on-hover permanent location="right" rail>
+    <v-list>
+      <user-button />
+    </v-list>
 
-      <v-divider></v-divider>
+    <v-divider />
+    <template v-if="appStore.me?.permissions ?? 0 > 0">
 
       <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-folder" title="My Files" value="myfiles"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-multiple" title="Shared with me" value="shared"></v-list-item>
-        <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
+        <v-list-item prepend-icon="mdi-view-dashboard" title="Admin Dashboard" @click="router.push('/admin/dashboard')" />
+        <v-list-item prepend-icon="mdi-account-multiple" title="Users" @click="router.push('/admin/users')" />
+        <v-list-item prepend-icon="mdi-calendar-month" title="Appointments" @click="router.push('/admin/appointments')" />
+        <v-list-item prepend-icon="mdi-car" title="Cars" @click="router.push('/admin/cars')" />
       </v-list>
-    </v-navigation-drawer>
+      <v-divider />
+    </template>
+    <v-list density="compact" nav>
+      <v-list-item prepend-icon="mdi-calendar-month" title="my Appointments"></v-list-item>
+      <v-list-item prepend-icon="mdi-car" title="My Cars"></v-list-item>
+    </v-list>
+    <v-divider />
+    <v-list>
+
+      <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout" v-if="appStore.me" />
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <script lang="ts" setup>
 import router from "@/router";
 import { useAppStore } from "@/stores/app";
 import { ref } from "vue";
+import UserButton from "./userButton.vue";
+import { useAuthApi } from "@/lib/api";
 const drawer = ref(false);
 const appStore = useAppStore();
+const authApi = useAuthApi();
+async function logout() {
+  await authApi.logoutAuthLogoutPost();
+  appStore.me = null;
+}
 </script>

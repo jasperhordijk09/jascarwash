@@ -36,11 +36,7 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       Record<never, never>,
       | never
-<<<<<<< Updated upstream
     >,
-=======
-    >
->>>>>>> Stashed changes
   }
 
   /**
