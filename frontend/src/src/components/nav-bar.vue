@@ -14,10 +14,14 @@
       </v-list>
       <v-divider />
     </template>
+    <template v-if="appStore.me">
       <v-list density="compact" nav>
         <v-list-item prepend-icon="mdi-view-dashboard" title="Dashboard" @click="router.push('/user/dashboard')" />
-        <v-list-item prepend-icon="mdi-calendar-check" title="My Appointments" @click="router.push('/user/appointments')" />      </v-list>
-    <v-divider />
+        <v-list-item prepend-icon="mdi-calendar-check" title="My Appointments" @click="router.push('/user/appointments')" />
+        <v-list-item prepend-icon="mdi-car" title="My Cars" @click="router.push('/user/cars')" />
+      </v-list>
+      <v-divider />
+    </template>
     <v-list>
 
       <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout" v-if="appStore.me" />

@@ -30,3 +30,16 @@ class Car(SQLModel, table=True):
     owner_id: Optional[str] = Field(default=None, foreign_key="users.id")
 
     owner: Optional[User] = Relationship(back_populates="cars")
+    appointments: List["Appointment"] = Relationship(back_populates="car")
+
+
+class Appointment(SQLModel, table=True):
+    __tablename__ = "appointments"  # pyright: ignore[reportAssignmentType]
+
+    id: str = Field(default_factory=sqlFactories.generate_uuid, primary_key=True, unique=True)
+    start_time: datetime = Field(nullable=False)
+    end_time: datetime = Field(nullable=False)
+    description: str = Field(nullable=False)
+
+    car_id: str = Field(index=True, nullable=False, foreign_key="cars.id")
+    car: Optional[Car] = Relationship(back_populates="appointments")
